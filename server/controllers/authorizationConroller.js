@@ -12,7 +12,7 @@ const User = require('../models/User')
 const sendCode = async (req, res) => {
     try{
         if(await checkUserExist(req.body.email)){
-            res.status(400).json({message: "User with this email already exists"})
+            res.status(400).json({message: "User with this email already exists."})
         }
         else {
             let code = Math.floor(Math.random() * 1000000) + ''
@@ -23,11 +23,11 @@ const sendCode = async (req, res) => {
                 code: code
             }).save()
         
-            res.status(200).json({message: "Verification send!"})
+            res.status(200).json({message: "Verification sent."})
         }
     }
     catch(e){
-        res.status(500).json({message: e.message || 'An unexpected error occurred' })
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
     }
 } 
 
@@ -36,7 +36,7 @@ const signUp = async (req, res) => {
         const {code, email, password} = req.body
         
         if(await checkUserExist(email)){
-            return res.status(400).json({message: "User with this email already exists"})
+            return res.status(400).json({message: "User with this email already exists."})
         }
 
         const authCode = await AuthCode.findOne({
@@ -75,7 +75,7 @@ const signUp = async (req, res) => {
         }
     }
     catch(e){
-        res.status(500).json({message: e.message || 'An unexpected error occurred' })
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
     }
 }
 
@@ -112,7 +112,7 @@ const signIn = async (req, res) => {
         }
     }
     catch(e){
-        res.status(500).json({message: e.message || 'An unexpected error occurred' })
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
     }
 }
 

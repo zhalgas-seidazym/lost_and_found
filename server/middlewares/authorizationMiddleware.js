@@ -14,7 +14,7 @@ const validateSendCode = async (req, res, next) => {
         else next() 
     }
     catch(err){
-        res.status(500).json({message: err.message || 'An unexpected error occurred' })
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
     }
 }
 
@@ -37,7 +37,7 @@ const validateSignUp = async (req, res, next) => {
         else next() 
     }
     catch(err){
-        res.status(500).json({message: err.message || 'An unexpected error occurred' })
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
     }
 }
 
@@ -58,7 +58,7 @@ const validateSignIn = async (req, res, next) => {
         else next()
     }
     catch(err){
-        res.status(500).json({message: err.message || 'An unexpected error occurred' })
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
     }
 }
 

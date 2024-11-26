@@ -16,6 +16,7 @@ require('./server/config/db.js')
 require('./server/config/passport.js')
 
 app.use(require('./server/routes/authorization.js'))
+app.use(require('./server/routes/profile.js'))
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {
