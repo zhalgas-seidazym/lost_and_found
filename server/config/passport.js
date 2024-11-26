@@ -15,3 +15,7 @@ passport.use(new JWTStrategy(jwtOptions, async (jwtPayload, done) => {
     if(user) done(null, user)
     else done(null, false)
 }))
+
+module.exports = {
+    jwtOptions
+}
