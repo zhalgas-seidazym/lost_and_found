@@ -22,8 +22,7 @@ const createCategories = async () => {
 
 const getCategories = async (req, res) => {
     try {
-        let categories = await Category.find()
-
+        let categories = await Category.find().lean()
 
         categories = await Promise.all(categories.map(async (categ) => {
             const lostItemsCount = await LostItem.countDocuments({ category: categ.id })
