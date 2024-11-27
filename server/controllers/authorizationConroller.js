@@ -116,8 +116,102 @@ const signIn = async (req, res) => {
     }
 }
 
+const forgotPasswordSendCode = async (req, res) => {
+    try{
+        if(await checkUserExist(req.body.email)){
+            let code = Math.floor(Math.random() * 1000000) + ''
+            await sendMail(req.body.email, "Verification Code", code)
+            
+            await new AuthCode({
+                email: req.body.email,
+                code: code
+            }).save()
+        
+            res.status(200).json({message: "Verification sent."})
+        }
+        else {
+            res.status(400).json({message: "User with this email does not exist."})
+        }
+    }
+    catch(e){
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
+    }
+}
+
+const forgotPasswordVerifyCode = async (req, res) => {
+    try{
+        const {code, email} = req.body
+        
+        if(!await checkUserExist(email)){
+            return res.status(400).json({message: "User with this email does not exist."})
+        }
+
+        const authCode = await AuthCode.findOne({
+            email: email,
+            code: code
+        })
+        if(!authCode){
+            res.status(400).json({message: 'Verification code is wrong.'})
+        }
+        else {
+            const createdAt = new Date(authCode.createdAt)
+            const now = new Date()
+            const expirationTime = 5 * 60 * 1000
+            
+            if (now - createdAt > expirationTime) {
+                res.status(400).json({message: 'Verification code is expired.'})
+            }
+            else {
+                await AuthCode.deleteOne({
+                    email: email,
+                    code: code
+                })
+
+                res.status(200).json({message: 'Verification done.'})
+            }
+        }
+    }
+    catch(e){
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
+    }
+}
+
+const forgotPasswordChangePassword = async (req, res) => {
+    try{
+        const {newPassword, email} = req.body
+        
+        const user = await User.findOne({
+            email: email
+        })
+
+        if(!user){
+            res.status(400).json({message: "User with this email does not exist."})
+        }
+        else {
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(newPassword, salt)
+            
+            await User.findByIdAndUpdate(
+                user.id,
+                {
+                    password: hashedPassword
+                }
+            )
+
+            res.status(200).json({message: 'Password changed successfully.'})
+        }
+
+    }
+    catch(e){
+        res.status(500).json({message: e.message || 'An unexpected error occurred.' })
+    }
+}
+
 module.exports = {
     signUp,
     sendCode,
-    signIn
+    signIn,
+    forgotPasswordSendCode,
+    forgotPasswordVerifyCode,
+    forgotPasswordChangePassword
 }

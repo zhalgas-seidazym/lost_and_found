@@ -12,21 +12,21 @@ router.get(
 )
 
 router.put(
-    '/api/changepassword',
+    '/api/profile/changepassword',
     passport.authenticate('jwt', {session: false}),
     validateChangePassword,
     changePassword
 )
 
 router.put(
-    '/api/changetelegram',
+    '/api/profile/changetelegram',
     passport.authenticate('jwt', {session: false}),
     validateChangeTelegram,
     changeTelegram
 )
 
 router.put(
-    '/api/changephone',
+    '/api/profile/changephone',
     passport.authenticate('jwt', {session: false}),
     validateChangePhone,
     changePhone

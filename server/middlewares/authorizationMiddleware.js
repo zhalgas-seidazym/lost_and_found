@@ -62,8 +62,69 @@ const validateSignIn = async (req, res, next) => {
     }
 }
 
+const validateForgotPasswordSendCode = (req, res, next) => {
+    try{
+        const errors = {}
+        if(!req.body.email || req.body.email.length == 0){
+            errors.email = "Email is required."
+        }
+    
+        if(Object.keys(errors).length > 0){
+            res.status(400).json(errors)
+        }
+        else next()
+    }
+    catch(err){
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
+    }
+}
+
+const validateForgotPasswordVerifyCode = (req, res, next) => {
+    try{
+        const errors = {}
+        if(!req.body.email || req.body.email.length == 0){
+            errors.email = "Email is required."
+        }
+        if(!req.body.code || req.body.code.length == 0){
+            errors.code = "Verification code is required."
+        }
+    
+        if(Object.keys(errors).length > 0){
+            res.status(400).json(errors)
+        }
+        else next()
+    }
+    catch(err){
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
+    }
+}
+
+const validateForgotPasswordChangePassword = (req, res, next) => {
+    try{
+        const errors = {}
+        if(!req.body.email || req.body.email.length == 0){
+            errors.email = "Email is required."
+        }
+        if(!req.body.newPassword || req.body.newPassword.length == 0){
+            errors.newPassword = "New password is required."
+        }
+    
+        if(Object.keys(errors).length > 0){
+            res.status(400).json(errors)
+        }
+        else next()
+    }
+    catch(err){
+        res.status(500).json({message: err.message || 'An unexpected error occurred.' })
+    }
+}
+
+
 module.exports = {
     validateSendCode,
     validateSignUp,
-    validateSignIn
+    validateSignIn,
+    validateForgotPasswordSendCode,
+    validateForgotPasswordVerifyCode,
+    validateForgotPasswordChangePassword
 }
