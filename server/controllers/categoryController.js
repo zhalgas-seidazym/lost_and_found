@@ -25,21 +25,22 @@ const getCategories = async (req, res) => {
         let categories = await Category.find().lean()
 
         categories = await Promise.all(categories.map(async (categ) => {
-            const lostItemsCount = await LostItem.countDocuments({ category: categ.id })
+            const lostItemsCount = await LostItem.countDocuments({ category: categ._id })
 
-            const foundItemsCount = await FoundItem.countDocuments({ category: categ.id })
+            const foundItemsCount = await FoundItem.countDocuments({ category: categ._id })
 
             return {
-                id: categ.id,
+                id: categ._id,
                 name: categ.name,
-                lostCount: lostItemsCount,
-                foundCount: foundItemsCount
+                lostItemsCount: lostItemsCount,
+                foundItemsCount: foundItemsCount
             }
         }))
 
         res.status(200).json(categories)
 
-    } catch (err) {
+    } 
+    catch (err) {
         res.status(500).json({ message: err.message || 'An unexpected error occurred.' })
     }
 }

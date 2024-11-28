@@ -5,11 +5,20 @@ const foundItemSchema = new Schema(
     {
         name: {
             type: String,
-            required: true  
+            required: [true, 'Name is required'],
+            minlength: [1, 'Name must not be empty'],
+            trim: true,
+            validate: {
+                validator: function(value) {
+                    return value.trim().length > 0
+                },
+                message: 'Name cannot be just whitespace'
+            } 
         },
         description: {
             type: String,
-            required: false
+            required: false,
+            trim: true
         },
         images: [{
             type: String,
