@@ -21,7 +21,9 @@ const lostItemAdd = async (req, res) => {
             name: lostItem.name,
             description: lostItem.description,
             images: lostItem.images,
-            user: lostItem.user
+            user: lostItem.user,
+            createdAt: lostItem.createdAt,
+            updatedAt: lostItem.updatedAt
         })
     }
     catch (err) {
@@ -69,6 +71,8 @@ const lostItemUpdate = async (req, res) => {
                 user: lostItem.user,
                 images: lostItem.images,
                 category: lostItem.category,
+                createdAt: lostItem.createdAt,
+                updatedAt: lostItem.updatedAt
             })
         }
         else {
@@ -138,7 +142,9 @@ const lostItemSearch = async (req, res) => {
                     id: item.category._id,
                     name: item.category.name,
                 },
-                images: item.images
+                images: item.images,
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt
             }  
         })
 
@@ -175,7 +181,9 @@ const lostItemGetById = async (req, res) => {
             category: {
                 id: lostItem.category.id,
                 name: lostItem.category.name
-            }
+            },
+            createdAt: lostItem.createdAt,
+            updatedAt: lostItem.updatedAt
         }
 
         res.status(200).json(fullInfo)

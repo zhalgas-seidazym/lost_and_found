@@ -64,6 +64,14 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *                   items:
  *                     type: string
  *                     description: The URLs or paths to images of the lost item.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was last updated.
  *             example:
  *               id: "67890xyz"
  *               name: "Wallet"
@@ -72,6 +80,8 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *               images:
  *                 - "img/lost/wallet1.jpg"
  *                 - "img/lost/wallet2.jpg"
+ *               createdAt: "2024-11-29T14:25:00Z"
+ *               updatedAt: "2024-11-29T14:30:00Z"
  *       400:
  *         description: Missing required fields or invalid data.
  *         content:
@@ -159,7 +169,7 @@ router.put('/api/lost/update/', (req, res) => {
  * /api/lost/update/{id}:
  *   put:
  *     summary: Update an existing lost item.
- *     description: This endpoint allows the user to update the details of a lost item, including its name, description, category, and images.
+ *     description: This endpoint allows the user to update the details of a lost item, including its name, description, category, images, and it updates the `updatedAt` field to reflect the modification timestamp.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -204,18 +214,26 @@ router.put('/api/lost/update/', (req, res) => {
  *                   description: The unique identifier of the lost item.
  *                 name:
  *                   type: string
- *                   description: The name of the lost item.
+ *                   description: The updated name of the lost item.
  *                 description:
  *                   type: string
- *                   description: The description of the lost item.
+ *                   description: The updated description of the lost item.
  *                 category:
  *                   type: string
- *                   description: The category ID of the lost item.
+ *                   description: The updated category ID of the lost item.
  *                 images:
  *                   type: array
  *                   items:
  *                     type: string
- *                     description: The URLs or paths to images of the lost item.
+ *                     description: The updated URLs or paths to images of the lost item.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was originally created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was last updated (current time).
  *                 user:
  *                   type: string
  *                   description: The user ID who updated the lost item.
@@ -227,6 +245,8 @@ router.put('/api/lost/update/', (req, res) => {
  *               images:
  *                 - "img/lost/wallet1.jpg"
  *                 - "img/lost/wallet2.jpg"
+ *               createdAt: "2024-11-28T14:00:00Z"
+ *               updatedAt: "2024-11-29T14:30:00Z"
  *               user: "user123"
  *       400:
  *         description: Access denied or invalid lost item ID.
@@ -432,6 +452,14 @@ router.delete(
  *                         items:
  *                           type: string
  *                           description: The URLs or paths to images of the lost item.
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the lost item was originally created.
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the lost item was last updated.
  *             example:
  *               totalItems: 50
  *               totalPages: 5
@@ -447,6 +475,8 @@ router.delete(
  *                   images:
  *                     - "img/lost/wallet1.jpg"
  *                     - "img/lost/wallet2.jpg"
+ *                   createdAt: "2024-11-28T14:00:00Z"
+ *                   updatedAt: "2024-11-29T14:30:00Z"
  *       400:
  *         description: Invalid query parameters or missing required fields.
  *         content:
@@ -529,6 +559,14 @@ router.get('/api/lost', lostItemSearch)
  *                     name:
  *                       type: string
  *                       description: The name of the category of the lost item.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was originally created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the lost item was last updated.
  *             example:
  *               id: "12345abc"
  *               name: "Lost Wallet"
@@ -544,6 +582,8 @@ router.get('/api/lost', lostItemSearch)
  *               category:
  *                 id: "electronics"
  *                 name: "Electronics"
+ *               createdAt: "2024-11-28T14:00:00Z"
+ *               updatedAt: "2024-11-29T14:30:00Z"
  *       400:
  *         description: Lost item with the given ID does not exist.
  *         content:

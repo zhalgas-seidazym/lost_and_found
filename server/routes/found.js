@@ -64,6 +64,14 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *                   items:
  *                     type: string
  *                     description: The URLs or paths to images of the found item.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was last updated.
  *             example:
  *               id: "12345abc"
  *               name: "Laptop"
@@ -72,6 +80,8 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *               images:
  *                 - "img/found/laptop1.jpg"
  *                 - "img/found/laptop2.jpg"
+ *               createdAt: "2024-11-29T14:25:00Z"
+ *               updatedAt: "2024-11-29T14:25:00Z"
  *       400:
  *         description: Missing required fields or invalid data.
  *         content:
@@ -421,6 +431,14 @@ router.delete(
  *                         items:
  *                           type: string
  *                           description: The URLs or paths to images of the found item.
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the found item was created.
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The timestamp when the found item was last updated.
  *             example:
  *               totalItems: 50
  *               totalPages: 3
@@ -436,6 +454,8 @@ router.delete(
  *                   images:
  *                     - "img/found/wallet1.jpg"
  *                     - "img/found/wallet2.jpg"
+ *                   createdAt: "2024-11-29T14:25:00Z"
+ *                   updatedAt: "2024-11-30T10:10:00Z"
  *                 - id: "607c35f8f01a2c001f9f392d"
  *                   name: "Lost Phone"
  *                   description: "A black smartphone found on the street."
@@ -445,6 +465,8 @@ router.delete(
  *                     name: "Electronics"
  *                   images:
  *                     - "img/found/phone1.jpg"
+ *                   createdAt: "2024-11-28T10:30:00Z"
+ *                   updatedAt: "2024-11-29T12:15:00Z"
  *       500:
  *         description: Unexpected error occurred while searching for found items.
  *         content:

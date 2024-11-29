@@ -22,6 +22,8 @@ const foundItemAdd = async (req, res) => {
             user: foundItem.user,
             category: foundItem.category,
             images: foundItem.images,
+            createdAt: foundItem.createdAt,
+            updatedAt: foundItem.updatedAt
         })
     }
     catch (err) {
@@ -67,7 +69,9 @@ const foundItemUpdate = async (req, res) => {
                 name: foundItem.name,
                 description: foundItem.description,
                 category: foundItem.category,
-                images: foundItem.images
+                images: foundItem.images,
+                createdAt: foundItem.createdAt,
+                updatedAt: foundItem.updatedAt,
             })
         }
         else {
@@ -137,7 +141,9 @@ const foundItemSearch = async (req, res) => {
                     id: item.category._id,
                     name: item.category.name,
                 },
-                images: item.images
+                images: item.images,
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt
             }  
         })
 
@@ -174,7 +180,9 @@ const foundItemGetById = async (req, res) => {
             category: {
                 id: foundItem.category.id,
                 name: foundItem.category.name
-            }
+            },
+            createdAt: foundItem.createdAt,
+            updatedAt: foundItem.updatedAt
         }
 
         res.status(200).json(fullInfo)
