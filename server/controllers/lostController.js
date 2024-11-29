@@ -112,6 +112,7 @@ const lostItemSearch = async (req, res) => {
     try{
         const {query, category} = req.query
         let {page} = req.query
+        page = page - 1
         const itemsPerPage = 20
 
         const filter = {}
@@ -154,7 +155,7 @@ const lostItemSearch = async (req, res) => {
         res.status(200).json({
             totalItems,
             totalPages,
-            page,
+            page: page + 1,
             lostItems
         })
     }

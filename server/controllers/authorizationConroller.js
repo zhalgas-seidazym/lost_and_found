@@ -15,8 +15,8 @@ const sendCode = async (req, res) => {
             res.status(400).json({message: "User with this email already exists."})
         }
         else {
-            let code = '1234'/* Math.floor(Math.random() * 1000000) + ''
-            await sendMail(req.body.email, "Verification Code", code) */
+            let code = Math.floor(Math.random() * 1000000) + ''
+            await sendMail(req.body.email, "Verification Code", code)
             
             await new AuthCode({
                 email: req.body.email,
@@ -97,7 +97,7 @@ const signIn = async (req, res) => {
                     }, 
                     jwtOptions.secretOrKey,
                     {
-                       expiresIn: 24 * 60 * 60 * 7
+                       expiresIn: 24 * 60 * 60 * 10
                     }
                 )
         
