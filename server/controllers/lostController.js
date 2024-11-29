@@ -16,7 +16,13 @@ const lostItemAdd = async (req, res) => {
             images: images
         }).save()
     
-        res.status(200).json(lostItem)
+        res.status(200).json({
+            id: lostItem.id,
+            name: lostItem.name,
+            description: lostItem.description,
+            images: lostItem.images,
+            user: lostItem.user
+        })
     }
     catch (err) {
         res.status(500).json({ message: err.message || 'An unexpected error occurred.' })
@@ -56,7 +62,14 @@ const lostItemUpdate = async (req, res) => {
                 {new: true}
             )
     
-            res.status(200).json(lostItem)
+            res.status(200).json({
+                id: lostItem.id,
+                name: lostItem.name,
+                description: lostItem.description,
+                user: lostItem.user,
+                images: lostItem.images,
+                category: lostItem.category,
+            })
         }
         else {
             res.status(400).json({message: 'Lost item post with this id does not exist.'})
@@ -114,7 +127,20 @@ const lostItemSearch = async (req, res) => {
             page = 0
         }
 
-        const lostItems = await LostItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category')
+        let lostItems = await LostItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category')
+        lostItems = lostItems.map((item) => {
+            return {
+                id: item._id,
+                name: item.name,
+                description: item.description,
+                user: item.user,
+                category: {
+                    id: item.category._id,
+                    name: item.category.name,
+                },
+                images: item.images
+            }  
+        })
 
         const totalItems = await LostItem.countDocuments(filter)
         const totalPages = Math.ceil(totalItems / itemsPerPage)

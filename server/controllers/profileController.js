@@ -13,12 +13,32 @@ const getUserInfo = async (req, res) => {
             phone: req.user.phone
         }
     
-        const lostPosts = await LostItem.find({
+        let lostPosts = await LostItem.find({
             user: user.id
         })
+        lostPosts = lostPosts.map(item => {
+            return {
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                images: item.images,
+                user: item.user,
+                category: item.category
+            }
+        })
     
-        const findPosts = await FoundItem.find({
+        let findPosts = await FoundItem.find({
             user: user.id
+        })
+        findPosts = findPosts.map(item => {
+            return {
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                images: item.images,
+                user: item.user,
+                category: item.category
+            }
         })
     
         user.lostItems = lostPosts
