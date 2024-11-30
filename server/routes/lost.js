@@ -462,7 +462,7 @@ router.delete(
  *                         description: The timestamp when the lost item was last updated.
  *             example:
  *               totalItems: 50
- *               totalPages: 5
+ *               totalPages: 3
  *               page: 1
  *               lostItems:
  *                 - id: "12345abc"

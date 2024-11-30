@@ -22,12 +22,23 @@ const createCategories = async () => {
 
 const getCategories = async (req, res) => {
     try {
+        const options = {}
+        const {query} = req.query
+
+        if(query){
+            options.$or = [
+                { name: { $regex: query, $options: 'i' } }, 
+                { description: { $regex: query, $options: 'i' } }
+            ]
+        }
+
         let categories = await Category.find().lean()
 
         categories = await Promise.all(categories.map(async (categ) => {
-            const lostItemsCount = await LostItem.countDocuments({ category: categ._id })
+            options.category = categ._id
+            const lostItemsCount = await LostItem.countDocuments(options)
 
-            const foundItemsCount = await FoundItem.countDocuments({ category: categ._id })
+            const foundItemsCount = await FoundItem.countDocuments(options)
 
             return {
                 id: categ._id,
