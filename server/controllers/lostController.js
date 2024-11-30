@@ -112,7 +112,6 @@ const lostItemSearch = async (req, res) => {
     try{
         const {query, category} = req.query
         let {page} = req.query
-        page = page - 1
         const itemsPerPage = 20
 
         const filter = {}
@@ -128,9 +127,7 @@ const lostItemSearch = async (req, res) => {
             filter.category = category
         }
 
-        if(!page){
-            page = 0
-        }
+        page ? page = 0 : page = page - 1
 
         let lostItems = await LostItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category')
         lostItems = lostItems.map((item) => {

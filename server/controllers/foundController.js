@@ -126,9 +126,7 @@ const foundItemSearch = async (req, res) => {
             filter.category = category
         }
 
-        if(!page){
-            page = 0
-        }
+        !page ? page = 0 : page = page - 1
 
         let foundItems = await FoundItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category').lean()
         foundItems = foundItems.map((item) => {
@@ -153,7 +151,7 @@ const foundItemSearch = async (req, res) => {
         res.status(200).json({
             totalItems,
             totalPages,
-            page,
+            page: page + 1,
             foundItems
         })
     }

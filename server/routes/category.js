@@ -55,7 +55,7 @@ createCategories()
  *           application/json:
  *             schema:
  *               type: object
- *               properties:
+ *               properties: 
  *                 message:
  *                   type: string
  *                   example: "An unexpected error occurred."

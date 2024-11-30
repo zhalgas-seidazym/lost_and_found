@@ -1,5 +1,3 @@
-
-
 const Category = require('../models/Category')
 const LostItem = require('../models/LostItem')
 const FoundItem = require('../models/FoundItem')
@@ -23,8 +21,7 @@ const createCategories = async () => {
 const getCategories = async (req, res) => {
     try {
         const options = {}
-        const {query} = req.query
-
+        const {query} = req.query        
         if(query){
             options.$or = [
                 { name: { $regex: query, $options: 'i' } }, 
@@ -36,10 +33,12 @@ const getCategories = async (req, res) => {
 
         categories = await Promise.all(categories.map(async (categ) => {
             options.category = categ._id
-            const lostItemsCount = await LostItem.countDocuments(options)
-
-            const foundItemsCount = await FoundItem.countDocuments(options)
-
+            const lostOptions = {...options}
+            const foundOptions = {...options}
+            
+            const lostItemsCount = await LostItem.countDocuments(lostOptions)
+            const foundItemsCount = await FoundItem.countDocuments(foundOptions)
+            
             return {
                 id: categ._id,
                 name: categ.name,
