@@ -5,12 +5,11 @@ const deleteImage = require('../utils/deleteImage')
 const lostItemAdd = async (req, res) => {
     try{
         const {name, description, category} = req.body
-    
         const images = req.files.map(img => `img/lost/${img.filename}`)
-    
+        
         const lostItem = await new LostItem({
             name: name, 
-            desctiption: description ? description : "",
+            description: description ? description : "",
             category: category,
             user: req.user.id,
             images: images

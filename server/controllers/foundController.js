@@ -10,7 +10,7 @@ const foundItemAdd = async (req, res) => {
     
         const foundItem = await new FoundItem({
             name: name, 
-            desctiption: description ? description : "",
+            description: description ? description : "",
             category: category,
             user: req.user.id,
             images: images
