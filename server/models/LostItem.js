@@ -20,16 +20,20 @@ const lostItemSchema = new Schema(
             required: false,
             trim: true
         },
+        lostDate: {
+            type: Schema.Types.Date,
+            required: true
+        },
         images: [{
             type: String,
             required: false
         }],
-        user: {
+        userId: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
-        category: {
+        categoryId: {
             type: Schema.Types.ObjectId,
             ref: 'Category',
             required: true

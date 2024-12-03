@@ -4,23 +4,26 @@ const deleteImage = require('../utils/deleteImage')
 
 const lostItemAdd = async (req, res) => {
     try{
-        const {name, description, category} = req.body
+        const {name, description, categoryId, lostDate} = req.body
         const images = req.files.map(img => `img/lost/${img.filename}`)
         
         const lostItem = await new LostItem({
             name: name, 
             description: description ? description : "",
-            category: category,
-            user: req.user.id,
-            images: images
+            categoryId: categoryId,
+            userId: req.user.id,
+            images: images,
+            lostDate: new Date(lostDate)
         }).save()
     
         res.status(200).json({
             id: lostItem.id,
             name: lostItem.name,
             description: lostItem.description,
+            categoryId: lostItem.categoryId,
             images: lostItem.images,
-            user: lostItem.user,
+            userId: lostItem.user,
+            lostDate: lostItem.lostDate,
             createdAt: lostItem.createdAt,
             updatedAt: lostItem.updatedAt
         })
@@ -35,13 +38,13 @@ const lostItemUpdate = async (req, res) => {
         let lostItem = await LostItem.findById(req.params.id)
 
         if(lostItem){
-            if(lostItem.user != req.user.id) {
+            if(lostItem.userId != req.user.id) {
                 req.files.forEach(img => deleteImage('img/lost/' + img.filename))
                 return res.status(400).json({message: 'Access denied.'})
             }
 
             const images = req.files.map(img => `img/lost/${img.filename}`)
-            const {name, description, category} = req.body
+            const {name, description, categoryId, lostDate} = req.body
     
             if(images.length == 0){
                 images = lostItem.images
@@ -57,8 +60,9 @@ const lostItemUpdate = async (req, res) => {
                 {
                     name: name ? name : lostItem.name,
                     description: description ? description : lostItem.description,
-                    category: category ? category : lostItem.category,
+                    categoryId: categoryId ? categoryId : lostItem.categoryId,
                     images: images,
+                    lostDate: lostDate ? new Date(lostDate) : lostItem.lostDate
                 },
                 {new: true}
             )
@@ -67,15 +71,16 @@ const lostItemUpdate = async (req, res) => {
                 id: lostItem.id,
                 name: lostItem.name,
                 description: lostItem.description,
-                user: lostItem.user,
+                userId: lostItem.userId,
                 images: lostItem.images,
-                category: lostItem.category,
+                categoryId: lostItem.categoryId,
+                lostDate: lostItem.lostDate,
                 createdAt: lostItem.createdAt,
                 updatedAt: lostItem.updatedAt
             })
         }
         else {
-            res.status(400).json({message: 'Lost item post with this id does not exist.'})
+            res.status(404).json({message: 'Lost item post with this id does not exist.'})
         }
     }
     catch (err) {
@@ -109,11 +114,19 @@ const lostItemDelete = async (req, res) => {
 
 const lostItemSearch = async (req, res) => {
     try{
-        const {query, category} = req.query
+        const {query, categoryId} = req.query
         let {page} = req.query
+        let {sort, dateFrom, dateTo} = req.query
+        
+        const filter = {}
         const itemsPerPage = 20
 
-        const filter = {}
+        if(dateFrom && dateFrom.length > 0){
+            filter.lostDate = {...filter.lostDate, $gte: new Date(dateFrom)}
+        }
+        if(dateTo && dateTo.length > 0){
+            filter.lostDate = {...filter.lostDate, $lte: new Date(dateTo)}
+        }
 
         if(query) {
             filter.$or = [
@@ -122,24 +135,30 @@ const lostItemSearch = async (req, res) => {
             ]
         }
         
-        if(category) {
-            filter.category = category
+        if(categoryId) {
+            filter.categoryId = categoryId
+        }
+
+        if(sort === "desc"){
+            sort = -1
+        }
+        else{
+            sort = 1
         }
 
         !page ? page = 0 : page = page - 1
 
-        let lostItems = await LostItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category')
+        let lostItems = await LostItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage)
+        
         lostItems = lostItems.map((item) => {
             return {
                 id: item._id,
                 name: item.name,
                 description: item.description,
-                user: item.user,
-                category: {
-                    id: item.category._id,
-                    name: item.category.name,
-                },
+                userId: item.userId,
+                categoryId: item.categoryId,
                 images: item.images,
+                lostDate: item.lostDate,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt
             }  
@@ -162,7 +181,7 @@ const lostItemSearch = async (req, res) => {
 
 const lostItemGetById = async (req, res) => {
     try{
-        const lostItem = await LostItem.findById(req.params.id).populate('user').populate('category')
+        const lostItem = await LostItem.findById(req.params.id).populate('userId').populate('categoryId')
 
         const fullInfo = {
             id: lostItem.id,
@@ -170,15 +189,16 @@ const lostItemGetById = async (req, res) => {
             description: lostItem.description,
             images: lostItem.images,
             user: {
-                id: lostItem.user.id,
-                email: lostItem.user.email,
-                telegram: lostItem.user.telegram,
-                phone: lostItem.user.phone
+                id: lostItem.userId.id,
+                email: lostItem.userId.email,
+                telegram: lostItem.userId.telegram,
+                phone: lostItem.userId.phone
             },
             category: {
-                id: lostItem.category.id,
-                name: lostItem.category.name
+                id: lostItem.categoryId.id,
+                name: lostItem.categoryId.name
             },
+            lostDate: lostItem.lostDate,
             createdAt: lostItem.createdAt,
             updatedAt: lostItem.updatedAt
         }

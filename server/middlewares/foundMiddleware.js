@@ -6,8 +6,11 @@ const validateFoundAdd = (req, res, next) => {
         if(!req.body.name || req.body.name.length == 0){
             errors.name = "Name is required."
         }
-        if(!req.body.category || req.body.category.length == 0){
-            errors.category = "Category is required."
+        if(!req.body.categoryId || req.body.categoryId.length == 0){
+            errors.categoryId = "Category ID is required."
+        }
+        if(!req.body.foundDate || req.body.foundDate.length == 0){
+            errors.foundDate = "Found date is required."
         }
     
         if(Object.keys(errors).length > 0){

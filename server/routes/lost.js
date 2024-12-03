@@ -11,7 +11,7 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  * /api/lost/add:
  *   post:
  *     summary: Add a new lost item to the database.
- *     description: This endpoint allows the user to add a new lost item with its details including name, description, category, and images.
+ *     description: This endpoint allows the user to add a new lost item with its details, including name, description, category, and images.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -27,18 +27,23 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *               description:
  *                 type: string
  *                 description: A description of the lost item (optional).
- *               category:
+ *               categoryId:
  *                 type: string
  *                 description: The category ID to which the lost item belongs.
+ *               lostDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The date the item was lost (optional).
  *               lostItemImages:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: The images of the lost item (up to 10 files). Users can select files from their devices.
+ *                 description: The images of the lost item (up to 10 files).
  *             required:
  *               - name
- *               - category
+ *               - categoryId
+ *               - lostDate
  *     responses:
  *       200:
  *         description: The lost item was successfully added to the database.
@@ -53,10 +58,13 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *                 name:
  *                   type: string
  *                   description: The name of the lost item.
- *                 user:
+ *                 description:
+ *                   type: string
+ *                   description: The description of the lost item.
+ *                 userId:
  *                   type: string
  *                   description: The user ID who added the lost item.
- *                 category:
+ *                 categoryId:
  *                   type: string
  *                   description: The category ID of the lost item.
  *                 images:
@@ -64,6 +72,10 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *                   items:
  *                     type: string
  *                     description: The URLs or paths to images of the lost item.
+ *                 lostDate:
+ *                   type: string
+ *                   format: date
+ *                   description: The date the item was lost.
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -75,11 +87,13 @@ const { lostItemAdd, lostItemUpdate, lostItemDelete, lostItemSearch, lostItemGet
  *             example:
  *               id: "67890xyz"
  *               name: "Wallet"
- *               user: "user456"
- *               category: "Accessories"
+ *               description: "A brown leather wallet."
+ *               userId: "user456"
+ *               categoryId: "Accessories"
  *               images:
  *                 - "img/lost/wallet1.jpg"
  *                 - "img/lost/wallet2.jpg"
+ *               lostDate: "2024-11-28"
  *               createdAt: "2024-11-29T14:25:00Z"
  *               updatedAt: "2024-11-29T14:30:00Z"
  *       400:
@@ -169,7 +183,7 @@ router.put('/api/lost/update/', (req, res) => {
  * /api/lost/update/{id}:
  *   put:
  *     summary: Update an existing lost item.
- *     description: This endpoint allows the user to update the details of a lost item, including its name, description, category, images, and it updates the `updatedAt` field to reflect the modification timestamp.
+ *     description: This endpoint allows the user to update the details of a lost item, including its name, description, category, images, and updates the `updatedAt` field to reflect the modification timestamp.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -192,9 +206,13 @@ router.put('/api/lost/update/', (req, res) => {
  *               description:
  *                 type: string
  *                 description: A description of the lost item (optional).
- *               category:
+ *               categoryId:
  *                 type: string
  *                 description: The category ID to which the lost item belongs.
+ *               lostDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The date the item was lost (optional).
  *               lostItemImages:
  *                 type: array
  *                 items:
@@ -218,7 +236,7 @@ router.put('/api/lost/update/', (req, res) => {
  *                 description:
  *                   type: string
  *                   description: The updated description of the lost item.
- *                 category:
+ *                 categoryId:
  *                   type: string
  *                   description: The updated category ID of the lost item.
  *                 images:
@@ -226,6 +244,10 @@ router.put('/api/lost/update/', (req, res) => {
  *                   items:
  *                     type: string
  *                     description: The updated URLs or paths to images of the lost item.
+ *                 lostDate:
+ *                   type: string
+ *                   format: date
+ *                   description: The date the item was lost.
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -234,20 +256,21 @@ router.put('/api/lost/update/', (req, res) => {
  *                   type: string
  *                   format: date-time
  *                   description: The timestamp when the lost item was last updated (current time).
- *                 user:
+ *                 userId:
  *                   type: string
  *                   description: The user ID who updated the lost item.
  *             example:
  *               id: "12345abc"
  *               name: "Wallet"
  *               description: "Black leather wallet found."
- *               category: "Personal Items"
+ *               categoryId: "Personal Items"
  *               images:
  *                 - "img/lost/wallet1.jpg"
  *                 - "img/lost/wallet2.jpg"
+ *               lostDate: "2024-11-28"
  *               createdAt: "2024-11-28T14:00:00Z"
  *               updatedAt: "2024-11-29T14:30:00Z"
- *               user: "user123"
+ *               userId: "user123"
  *       400:
  *         description: Access denied or invalid lost item ID.
  *         content:
@@ -258,6 +281,16 @@ router.put('/api/lost/update/', (req, res) => {
  *                 message:
  *                   type: string
  *                   example: "Access denied."
+ *       404:
+ *         description: Lost item with the provided ID does not exist.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Lost item post with this id does not exist."
  *       500:
  *         description: Unexpected error occurred while updating the lost item.
  *         content:
@@ -383,7 +416,7 @@ router.delete(
  * /api/lost:
  *   get:
  *     summary: Search for lost items.
- *     description: This endpoint allows users to search for lost items by query (name or description) and category, with pagination support.
+ *     description: This endpoint allows users to search for lost items by query (name or description), category, date range, and sort order, with pagination support.
  *     parameters:
  *       - name: query
  *         in: query
@@ -391,12 +424,34 @@ router.delete(
  *         required: false
  *         schema:
  *           type: string
- *       - name: category
+ *       - name: categoryId
  *         in: query
  *         description: The category ID to filter the lost items by.
  *         required: false
  *         schema:
  *           type: string
+ *       - name: dateFrom
+ *         in: query
+ *         description: The start date for filtering items by the lost date (ISO 8601 format).
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - name: dateTo
+ *         in: query
+ *         description: The end date for filtering items by the lost date (ISO 8601 format).
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - name: sort
+ *         in: query
+ *         description: The sort order for the results, either "asc" for ascending or "desc" for descending based on the lost date.
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "asc"
  *       - name: page
  *         in: query
  *         description: The page number for pagination (defaults to 0).
@@ -435,23 +490,21 @@ router.delete(
  *                       description:
  *                         type: string
  *                         description: A description of the lost item.
- *                       user:
+ *                       userId:
  *                         type: string
  *                         description: The ID of the user who created the lost item post.
- *                       category:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             description: The ID of the category.
- *                           name:
- *                             type: string
- *                             description: The name of the category.
+ *                       categoryId:
+ *                         type: string
+ *                         description: The ID of the category the lost item belongs to.
  *                       images:
  *                         type: array
  *                         items:
  *                           type: string
  *                           description: The URLs or paths to images of the lost item.
+ *                       lostDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the item was lost.
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -468,25 +521,14 @@ router.delete(
  *                 - id: "12345abc"
  *                   name: "Lost Wallet"
  *                   description: "A black wallet found near the park."
- *                   user: "user123"
- *                   category:
- *                     id: "electronics"
- *                     name: "Electronics"
+ *                   userId: "user123"
+ *                   categoryId: "electronics"
  *                   images:
  *                     - "img/lost/wallet1.jpg"
  *                     - "img/lost/wallet2.jpg"
+ *                   lostDate: "2024-11-25T12:00:00Z"
  *                   createdAt: "2024-11-28T14:00:00Z"
  *                   updatedAt: "2024-11-29T14:30:00Z"
- *       400:
- *         description: Invalid query parameters or missing required fields.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Invalid query parameters."
  *       500:
  *         description: Unexpected error occurred while fetching lost items.
  *         content:
@@ -559,6 +601,10 @@ router.get('/api/lost', lostItemSearch)
  *                     name:
  *                       type: string
  *                       description: The name of the category of the lost item.
+ *                 lostDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date when the item was lost.
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -582,9 +628,10 @@ router.get('/api/lost', lostItemSearch)
  *               category:
  *                 id: "electronics"
  *                 name: "Electronics"
+ *               lostDate: "2024-11-25T12:30:00Z"
  *               createdAt: "2024-11-28T14:00:00Z"
  *               updatedAt: "2024-11-29T14:30:00Z"
- *       400:
+ *       404:
  *         description: Lost item with the given ID does not exist.
  *         content:
  *           application/json:

@@ -27,9 +27,13 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *               description:
  *                 type: string
  *                 description: A description of the found item (optional).
- *               category:
+ *               categoryId:
  *                 type: string
  *                 description: The category ID to which the found item belongs.
+ *               foundDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The date the item was found (optional).
  *               foundItemImages:
  *                 type: array
  *                 items:
@@ -38,7 +42,8 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *                 description: The images of the found item (up to 10 files). Users can select files from their devices.
  *             required:
  *               - name
- *               - category
+ *               - categoryId
+ *               - foundDate
  *     responses:
  *       200:
  *         description: The found item was successfully added to the database.
@@ -53,10 +58,10 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *                 name:
  *                   type: string
  *                   description: The name of the found item.
- *                 user:
+ *                 userId:
  *                   type: string
  *                   description: The user ID who added the found item.
- *                 category:
+ *                 categoryId:
  *                   type: string
  *                   description: The category ID of the found item.
  *                 images:
@@ -64,6 +69,10 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *                   items:
  *                     type: string
  *                     description: The URLs or paths to images of the found item.
+ *                 foundDate:
+ *                   type: string
+ *                   format: date
+ *                   description: The date the item was found.
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -75,11 +84,12 @@ const { foundItemAdd, foundItemUpdate, foundItemDelete, foundItemSearch, foundIt
  *             example:
  *               id: "12345abc"
  *               name: "Laptop"
- *               user: "user123"
- *               category: "Electronics"
+ *               userId: "user123"
+ *               categoryId: "Electronics"
  *               images:
  *                 - "img/found/laptop1.jpg"
  *                 - "img/found/laptop2.jpg"
+ *               foundDate: "2024-11-28"
  *               createdAt: "2024-11-29T14:25:00Z"
  *               updatedAt: "2024-11-29T14:25:00Z"
  *       400:
@@ -182,18 +192,19 @@ router.put('/api/found/update/', (req, res) => {
  *               description:
  *                 type: string
  *                 description: The updated description of the found item (optional).
- *               category:
+ *               categoryId:
  *                 type: string
  *                 description: The updated category ID of the found item (optional).
+ *               foundDate:
+ *                 type: string
+ *                 format: date
+ *                 description: The date the item was found (optional).
  *               foundItemImages:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
  *                 description: New images for the found item (up to 10 files). Users can select files from their devices.
- *             required:
- *               - name
- *               - category
  *     responses:
  *       200:
  *         description: The found item was successfully updated.
@@ -211,7 +222,7 @@ router.put('/api/found/update/', (req, res) => {
  *                 description:
  *                   type: string
  *                   description: The updated description of the found item.
- *                 category:
+ *                 categoryId:
  *                   type: string
  *                   description: The updated category ID of the found item.
  *                 images:
@@ -219,14 +230,33 @@ router.put('/api/found/update/', (req, res) => {
  *                   items:
  *                     type: string
  *                     description: The updated URLs or paths to images of the found item.
+ *                 foundDate:
+ *                   type: string
+ *                   format: date
+ *                   description: The date the item was found.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was originally created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was last updated (current time).
+ *                 userId:
+ *                   type: string
+ *                   description: The user ID who updated the found item.
  *             example:
  *               id: "12345abc"
  *               name: "Updated Laptop"
  *               description: "A laptop with scratches."
- *               category: "Electronics"
+ *               categoryId: "Electronics"
  *               images:
  *                 - "img/found/laptop1_updated.jpg"
  *                 - "img/found/laptop2_updated.jpg"
+ *               foundDate: "2024-11-28"
+ *               createdAt: "2024-11-28T14:00:00Z"
+ *               updatedAt: "2024-11-29T14:30:00Z"
+ *               userId: "user123"
  *       400:
  *         description: Missing required fields or invalid data.
  *         content:
@@ -237,6 +267,16 @@ router.put('/api/found/update/', (req, res) => {
  *                 message:
  *                   type: string
  *                   example: "Found item post with this id does not exist or access denied."
+ *       404:
+ *         description: Found item with the provided ID does not exist.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Found item post with this id does not exist."
  *       500:
  *         description: Unexpected error occurred while updating the found item.
  *         content:
@@ -371,11 +411,33 @@ router.delete(
  *         schema:
  *           type: string
  *       - in: query
- *         name: category
+ *         name: categoryId
  *         required: false
  *         description: The category ID to filter found items.
  *         schema:
  *           type: string
+ *       - name: dateFrom
+ *         in: query
+ *         description: The start date for filtering items by the found date (ISO 8601 format).
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - name: dateTo
+ *         in: query
+ *         description: The end date for filtering items by the found date (ISO 8601 format).
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - name: sort
+ *         in: query
+ *         description: The sort order for the results, either "asc" for ascending or "desc" for descending based on the found date.
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "asc"
  *       - in: query
  *         name: page
  *         required: false
@@ -414,23 +476,21 @@ router.delete(
  *                       description:
  *                         type: string
  *                         description: A description of the found item.
- *                       user:
+ *                       userId:
  *                         type: string
  *                         description: The user ID who reported the found item.
- *                       category:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: string
- *                             description: The category ID of the found item.
- *                           name:
- *                             type: string
- *                             description: The name of the category.
+ *                       categoryId:
+ *                         type: string
+ *                         description: The ID of the category the found item belongs to.
  *                       images:
  *                         type: array
  *                         items:
  *                           type: string
  *                           description: The URLs or paths to images of the found item.
+ *                       foundDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the item was found.
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -447,26 +507,14 @@ router.delete(
  *                 - id: "607c35f8f01a2c001f9f392b"
  *                   name: "Found Wallet"
  *                   description: "A brown leather wallet found near the park."
- *                   user: "607c35f8f01a2c001f9f392a"
- *                   category:
- *                     id: "607c35f8f01a2c001f9f392c"
- *                     name: "Documents"
+ *                   userId: "607c35f8f01a2c001f9f392a"
+ *                   categoryId: "electronics"
  *                   images:
  *                     - "img/found/wallet1.jpg"
  *                     - "img/found/wallet2.jpg"
+ *                   foundDate: "2024-11-25T12:00:00Z"
  *                   createdAt: "2024-11-29T14:25:00Z"
  *                   updatedAt: "2024-11-30T10:10:00Z"
- *                 - id: "607c35f8f01a2c001f9f392d"
- *                   name: "Lost Phone"
- *                   description: "A black smartphone found on the street."
- *                   user: "607c35f8f01a2c001f9f392e"
- *                   category:
- *                     id: "607c35f8f01a2c001f9f392f"
- *                     name: "Electronics"
- *                   images:
- *                     - "img/found/phone1.jpg"
- *                   createdAt: "2024-11-28T10:30:00Z"
- *                   updatedAt: "2024-11-29T12:15:00Z"
  *       500:
  *         description: Unexpected error occurred while searching for found items.
  *         content:
@@ -539,6 +587,18 @@ router.get('/api/found', foundItemSearch)
  *                     name:
  *                       type: string
  *                       description: The name of the category the found item belongs to.
+ *                 foundDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The date when the item was found.
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was originally created.
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: The timestamp when the found item was last updated.
  *             example:
  *               id: "607c35f8f01a2c001f9f392b"
  *               name: "Found Wallet"
@@ -554,6 +614,9 @@ router.get('/api/found', foundItemSearch)
  *               category:
  *                 id: "607c35f8f01a2c001f9f392c"
  *                 name: "Documents"
+ *               foundDate: "2024-11-25T12:30:00Z"
+ *               createdAt: "2024-11-28T14:00:00Z"
+ *               updatedAt: "2024-11-29T14:30:00Z"
  *       404:
  *         description: The found item with the specified ID does not exist.
  *         content:

@@ -4,24 +4,25 @@ const deleteImage = require('../utils/deleteImage')
 
 const foundItemAdd = async (req, res) => {
     try{
-        const {name, description, category} = req.body
-    
+        const {name, description, categoryId, foundDate} = req.body
         const images = req.files.map(img => `img/found/${img.filename}`)
     
         const foundItem = await new FoundItem({
             name: name, 
             description: description ? description : "",
-            category: category,
-            user: req.user.id,
-            images: images
+            categoryId: categoryId,
+            userId: req.user.id,
+            images: images,
+            foundDate: new Date(foundDate)
         }).save()
     
         res.status(200).json({
             id: foundItem.id,
             name: foundItem.name,
-            user: foundItem.user,
-            category: foundItem.category,
+            userId: foundItem.userId,
+            categoryId: foundItem.categoryId,
             images: foundItem.images,
+            foundDate: foundItem.foundDate,
             createdAt: foundItem.createdAt,
             updatedAt: foundItem.updatedAt
         })
@@ -36,13 +37,13 @@ const foundItemUpdate = async (req, res) => {
         let foundItem = await FoundItem.findById(req.params.id)
 
         if(foundItem){
-            if(foundItem.user != req.user.id) {
+            if(foundItem.userId != req.user.id) {
                 req.files.forEach(img => deleteImage('img/found/' + img.filename))
                 return res.status(400).json({message: 'Access denied.'})
             }
 
             const images = req.files.map(img => `img/found/${img.filename}`)
-            const {name, description, category} = req.body
+            const {name, description, categoryId, foundDate} = req.body
     
             if(images.length == 0){
                 images = foundItem.images
@@ -58,8 +59,9 @@ const foundItemUpdate = async (req, res) => {
                 {
                     name: name ? name : foundItem.name,
                     description: description ? description : foundItem.description,
-                    category: category ? category : foundItem.category,
+                    categoryId: categoryId ? categoryId : foundItem.categoryId,
                     images: images,
+                    foundDate: foundDate ? new Date(foundDate) : foundItem.foundDate
                 },
                 {new: true}
             )
@@ -68,14 +70,16 @@ const foundItemUpdate = async (req, res) => {
                 id: foundItem.id,
                 name: foundItem.name,
                 description: foundItem.description,
-                category: foundItem.category,
+                userId: foundItem.userId,
+                categoryId: foundItem.categoryId,
                 images: foundItem.images,
+                foundDate: foundItem.foundDate,
                 createdAt: foundItem.createdAt,
                 updatedAt: foundItem.updatedAt,
             })
         }
         else {
-            res.status(400).json({message: 'Found item post with this id does not exist.'})
+            res.status(404).json({message: 'Found item post with this id does not exist.'})
         }
     }
     catch (err) {
@@ -109,11 +113,19 @@ const foundItemDelete = async (req, res) => {
 
 const foundItemSearch = async (req, res) => {
     try{
-        const {query, category} = req.query
+        const {query, categoryId} = req.query
         let {page} = req.query
-        const itemsPerPage = 20
-
+        let {sort, dateFrom, dateTo} = req.query
+        
         const filter = {}
+        const itemsPerPage = 20
+        
+        if(dateFrom && dateFrom.length > 0){
+            filter.foundDate = {...filter.foundDate, $gte: new Date(dateFrom)}
+        }
+        if(dateTo && dateTo.length > 0){
+            filter.foundDate = {...filter.foundDate, $lte: new Date(dateTo)}
+        }
 
         if(query) {
             filter.$or = [
@@ -122,24 +134,30 @@ const foundItemSearch = async (req, res) => {
             ]
         }
         
-        if(category) {
-            filter.category = category
+        if(categoryId) {
+            filter.categoryId = categoryId
+        }
+
+        if(sort === "desc"){
+            sort = -1
+        }
+        else{
+            sort = 1
         }
 
         !page ? page = 0 : page = page - 1
 
-        let foundItems = await FoundItem.find(filter).skip(itemsPerPage * page).limit(itemsPerPage).populate('category').lean()
+        let foundItems = await FoundItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage)
+
         foundItems = foundItems.map((item) => {
             return {
                 id: item._id,
                 name: item.name,
                 description: item.description,
-                user: item.user,
-                category: {
-                    id: item.category._id,
-                    name: item.category.name,
-                },
+                userId: item.userId,
+                categoryId: item.categoryId,
                 images: item.images,
+                foundDate: item.foundDate,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt
             }  
@@ -162,7 +180,7 @@ const foundItemSearch = async (req, res) => {
 
 const foundItemGetById = async (req, res) => {
     try{
-        const foundItem = await FoundItem.findById(req.params.id).populate('user').populate('category')
+        const foundItem = await FoundItem.findById(req.params.id).populate('userId').populate('categoryId')
 
         const fullInfo = {
             id: foundItem.id,
@@ -170,15 +188,16 @@ const foundItemGetById = async (req, res) => {
             description: foundItem.description,
             images: foundItem.images,
             user: {
-                id: foundItem.user.id,
-                email: foundItem.user.email,
-                telegram: foundItem.user.telegram,
-                phone: foundItem.user.phone
+                id: foundItem.userId.id,
+                email: foundItem.userId.email,
+                telegram: foundItem.userId.telegram,
+                phone: foundItem.userId.phone
             },
             category: {
-                id: foundItem.category.id,
-                name: foundItem.category.name
+                id: foundItem.categoryId.id,
+                name: foundItem.categoryId.name
             },
+            foundDate: foundItem.foundDate,
             createdAt: foundItem.createdAt,
             updatedAt: foundItem.updatedAt
         }
