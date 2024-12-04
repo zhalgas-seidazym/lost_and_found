@@ -148,7 +148,7 @@ const lostItemSearch = async (req, res) => {
 
         !page ? page = 0 : page = page - 1
 
-        let lostItems = await LostItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage)
+        let lostItems = await LostItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage).populate('categoryId')
         
         lostItems = lostItems.map((item) => {
             return {

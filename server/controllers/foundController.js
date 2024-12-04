@@ -147,7 +147,7 @@ const foundItemSearch = async (req, res) => {
 
         !page ? page = 0 : page = page - 1
 
-        let foundItems = await FoundItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage)
+        let foundItems = await FoundItem.find(filter).sort({createdAt: sort}).skip(itemsPerPage * page).limit(itemsPerPage).populate('categoryId')
 
         foundItems = foundItems.map((item) => {
             return {
