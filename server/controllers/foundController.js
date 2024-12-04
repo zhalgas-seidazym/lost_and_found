@@ -138,7 +138,7 @@ const foundItemSearch = async (req, res) => {
             filter.categoryId = categoryId
         }
 
-        if(sort === "desc"){
+        if(sort === "asc"){
             sort = -1
         }
         else{
