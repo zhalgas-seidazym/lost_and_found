@@ -32,7 +32,7 @@ const getCategories = async (req, res) => {
         let categories = await Category.find().lean()
 
         categories = await Promise.all(categories.map(async (categ) => {
-            options.category = categ._id
+            options.categoryId = categ._id
             const lostOptions = {...options}
             const foundOptions = {...options}
             
