@@ -451,7 +451,7 @@ router.delete(
  *         schema:
  *           type: string
  *           enum: [asc, desc]
- *           default: "asc"
+ *           default: "desc" 
  *       - name: page
  *         in: query
  *         description: The page number for pagination (defaults to 0).
@@ -476,7 +476,7 @@ router.delete(
  *                 page:
  *                   type: integer
  *                   description: The current page number.
- *                 lostItems:
+ *                 lostItems: 
  *                   type: array
  *                   items:
  *                     type: object
@@ -493,15 +493,21 @@ router.delete(
  *                       userId:
  *                         type: string
  *                         description: The ID of the user who created the lost item post.
- *                       categoryId:
- *                         type: string
- *                         description: The ID of the category the lost item belongs to.
+ *                       category: 
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: The ID of the category the lost item belongs to.
+ *                           name:
+ *                             type: string
+ *                             description: The name of the category the lost item belongs to.
  *                       images:
  *                         type: array
  *                         items:
  *                           type: string
  *                           description: The URLs or paths to images of the lost item.
- *                       lostDate:
+ *                       lostDate: 
  *                         type: string
  *                         format: date-time
  *                         description: The date when the item was lost.
@@ -517,12 +523,14 @@ router.delete(
  *               totalItems: 50
  *               totalPages: 3
  *               page: 1
- *               lostItems:
+ *               lostItems: 
  *                 - id: "12345abc"
  *                   name: "Lost Wallet"
  *                   description: "A black wallet found near the park."
  *                   userId: "user123"
- *                   categoryId: "electronics"
+ *                   category:
+ *                     id: "electronics"
+ *                     name: "Electronics" 
  *                   images:
  *                     - "img/lost/wallet1.jpg"
  *                     - "img/lost/wallet2.jpg"

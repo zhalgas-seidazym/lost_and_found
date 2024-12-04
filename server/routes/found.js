@@ -437,7 +437,7 @@ router.delete(
  *         schema:
  *           type: string
  *           enum: [asc, desc]
- *           default: "asc"
+ *           default: "desc"
  *       - in: query
  *         name: page
  *         required: false
@@ -479,9 +479,15 @@ router.delete(
  *                       userId:
  *                         type: string
  *                         description: The user ID who reported the found item.
- *                       categoryId:
- *                         type: string
- *                         description: The ID of the category the found item belongs to.
+ *                       category: 
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: The ID of the category the found item belongs to.
+ *                           name:
+ *                             type: string
+ *                             description: The name of the category the found item belongs to.
  *                       images:
  *                         type: array
  *                         items:
@@ -508,7 +514,9 @@ router.delete(
  *                   name: "Found Wallet"
  *                   description: "A brown leather wallet found near the park."
  *                   userId: "607c35f8f01a2c001f9f392a"
- *                   categoryId: "electronics"
+ *                   category:
+ *                     id: "electronics"
+ *                     name: "Electronics" 
  *                   images:
  *                     - "img/found/wallet1.jpg"
  *                     - "img/found/wallet2.jpg"

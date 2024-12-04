@@ -156,7 +156,10 @@ const lostItemSearch = async (req, res) => {
                 name: item.name,
                 description: item.description,
                 userId: item.userId,
-                categoryId: item.categoryId,
+                category: {
+                    id: item.categoryId._id,
+                    name: item.categoryId.name
+                },
                 images: item.images,
                 lostDate: item.lostDate,
                 createdAt: item.createdAt,
