@@ -140,10 +140,10 @@ const lostItemSearch = async (req, res) => {
         }
 
         if(sort === "asc"){
-            sort = -1
+            sort = 1
         }
         else{
-            sort = 1
+            sort = -1
         }
 
         !page ? page = 0 : page = page - 1
