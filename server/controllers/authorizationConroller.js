@@ -33,7 +33,7 @@ const sendCode = async (req, res) => {
 
 const signUp = async (req, res) => {
     try{
-        const {code, email, password} = req.body
+        const {code, email, password, name, surname} = req.body
         
         if(await checkUserExist(email)){
             return res.status(400).json({message: "User with this email already exists."})
@@ -64,6 +64,8 @@ const signUp = async (req, res) => {
                 const hashedPassword = await bcrypt.hash(password, salt)
         
                 await new User({
+                    name: name, 
+                    surname: surname,
                     email: email,
                     password: hashedPassword,
                     telegram: "",

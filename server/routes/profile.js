@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const passport = require('passport')
 
-const {getUserInfo, changePassword, changeTelegram, changePhone} = require('../controllers/profileController')
+const {getUserInfo, changePassword, changeTelegram, changePhone, changeCredentials} = require('../controllers/profileController')
 const { validateChangePassword, validateChangeTelegram, validateChangePhone } = require('../middlewares/profileMiddleware')
 
 /**
@@ -24,6 +24,12 @@ const { validateChangePassword, validateChangeTelegram, validateChangePhone } = 
  *                 id:
  *                   type: string
  *                   description: The unique identifier of the user.
+ *                 name:
+ *                   type: string
+ *                   description: The name of the user.
+ *                 surname:
+ *                   type: string
+ *                   description: The surname of the user.
  *                 email:
  *                   type: string
  *                   description: The email of the user.
@@ -52,12 +58,30 @@ const { validateChangePassword, validateChangeTelegram, validateChangePhone } = 
  *                         items:
  *                           type: string
  *                         description: The images of the lost item.
- *                       user:
+ *                       userId:
  *                         type: string
  *                         description: The user ID who posted the lost item.
  *                       category:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: The category ID of the lost item.
+ *                           name:
+ *                             type: string
+ *                             description: The category name of the lost item.
+ *                       lostDate:
  *                         type: string
- *                         description: The category ID of the lost item.
+ *                         format: date
+ *                         description: The date when the item was lost.
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the lost item was created.
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the lost item was last updated.
  *                 findItems:
  *                   type: array
  *                   items:
@@ -77,14 +101,34 @@ const { validateChangePassword, validateChangeTelegram, validateChangePhone } = 
  *                         items:
  *                           type: string
  *                         description: The images of the found item.
- *                       user:
+ *                       userId:
  *                         type: string
  *                         description: The user ID who posted the found item.
  *                       category:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             description: The category ID of the found item.
+ *                           name:
+ *                             type: string
+ *                             description: The category name of the found item.
+ *                       foundDate:
  *                         type: string
- *                         description: The category ID of the found item.
+ *                         format: date
+ *                         description: The date when the item was found.
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the found item was created.
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: The date when the found item was last updated.
  *             example:
  *               id: "user123"
+ *               name: "John"
+ *               surname: "Doe"
  *               email: "user@example.com"
  *               telegram: "user_telegram"
  *               phone: "+1234567890"
@@ -94,16 +138,26 @@ const { validateChangePassword, validateChangeTelegram, validateChangePhone } = 
  *                   description: "A black wallet with some cards and cash."
  *                   images:
  *                     - "img/lost/wallet1.jpg"
- *                   user: "user123"
- *                   category: "Accessories"
+ *                   userId: "user123"
+ *                   category:
+ *                     id: "category1"
+ *                     name: "Accessories"
+ *                   lostDate: "2024-11-20"
+ *                   createdAt: "2024-11-21T14:00:00Z"
+ *                   updatedAt: "2024-11-21T15:00:00Z"
  *               findItems:
  *                 - id: "foundItem1"
  *                   name: "Found Phone"
  *                   description: "A silver phone found in the park."
  *                   images:
  *                     - "img/found/phone1.jpg"
- *                   user: "user123"
- *                   category: "Electronics"
+ *                   userId: "user123"
+ *                   category:
+ *                     id: "category2"
+ *                     name: "Electronics"
+ *                   foundDate: "2024-11-22"
+ *                   createdAt: "2024-11-23T10:00:00Z"
+ *                   updatedAt: "2024-11-23T11:00:00Z"
  *       401:
  *         description: Unauthorized access. The user must be authenticated with a valid token.
  *         content:
@@ -341,5 +395,69 @@ router.put(
     validateChangePhone,
     changePhone
 )
+
+/**
+ * @swagger
+ * /api/profile/changecredentials:
+ *   put:
+ *     summary: Update the user's name and surname.
+ *     description: This endpoint allows an authenticated user to change their name and surname. The request must include the user's new name and/or surname in the body.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The new first name of the user.
+ *               surname:
+ *                 type: string
+ *                 description: The new surname of the user.
+ *             required:
+ *     responses:
+ *       200:
+ *         description: User credentials updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User credentials changed successfully."
+ *       400:
+ *         description: Bad request (e.g., missing or invalid fields).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input."
+ *       401:
+ *         description: Unauthorized (authentication required).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized. Please log in."
+ *       500:
+ *         description: Unexpected error occurred.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An unexpected error occurred."
+ */
+router.put('/api/profile/changecredentials', passport.authenticate('jwt', {session: false}), changeCredentials)
 
 module.exports = router

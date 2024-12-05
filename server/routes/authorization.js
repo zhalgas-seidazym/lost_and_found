@@ -63,8 +63,8 @@ router.post('/api/sendcode', validateSendCode, sendCode)
  * @swagger
  * /api/signup:
  *   post:
- *     summary: Create a new user account with email, password, and verification code.
- *     description: This endpoint allows users to sign up by providing a verification code, email, and password. The verification code is checked for validity and expiration before user creation.
+ *     summary: Create a new user account with email, password, verification code, name, and surname.
+ *     description: This endpoint allows users to sign up by providing a verification code, email, password, name, and surname. The verification code is checked for validity and expiration before user creation.
  *     requestBody:
  *       required: true
  *       content:
@@ -82,10 +82,18 @@ router.post('/api/sendcode', validateSendCode, sendCode)
  *               code:
  *                 type: string
  *                 description: The verification code sent to the user's email.
+ *               name:
+ *                 type: string
+ *                 description: The first name of the user.
+ *               surname:
+ *                 type: string
+ *                 description: The surname of the user.
  *             required:
  *               - email
  *               - password
  *               - code
+ *               - name
+ *               - surname
  *     responses:
  *       200:
  *         description: User created successfully.

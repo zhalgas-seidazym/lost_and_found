@@ -577,6 +577,12 @@ router.get('/api/found', foundItemSearch)
  *                     id:
  *                       type: string
  *                       description: The unique identifier of the user who reported the found item.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the user who posted the found item.
+ *                     surname:
+ *                       type: string
+ *                       description: The surname of the user who posted the found item.
  *                     email:
  *                       type: string
  *                       description: The email address of the user who reported the found item.
@@ -616,6 +622,8 @@ router.get('/api/found', foundItemSearch)
  *                 - "img/found/wallet2.jpg"
  *               user:
  *                 id: "607c35f8f01a2c001f9f392a"
+ *                 name: "Zhoma"
+ *                 surname: "Turtan"
  *                 email: "user@example.com"
  *                 telegram: "@user_telegram"
  *                 phone: "+1234567890"

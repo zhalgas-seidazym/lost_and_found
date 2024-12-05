@@ -591,6 +591,12 @@ router.get('/api/lost', lostItemSearch)
  *                     id:
  *                       type: string
  *                       description: The ID of the user who posted the lost item.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the user who posted the lost item.
+ *                     surname:
+ *                       type: string
+ *                       description: The surname of the user who posted the lost item.
  *                     email:
  *                       type: string
  *                       description: The email of the user who posted the lost item.
@@ -630,6 +636,8 @@ router.get('/api/lost', lostItemSearch)
  *                 - "img/lost/wallet2.jpg"
  *               user:
  *                 id: "user123"
+ *                 name: "Zhoma"
+ *                 surname: "Turtan"
  *                 email: "user@example.com"
  *                 telegram: "user_telegram"
  *                 phone: "+1234567890"

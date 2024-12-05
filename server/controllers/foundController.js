@@ -192,6 +192,8 @@ const foundItemGetById = async (req, res) => {
             images: foundItem.images,
             user: {
                 id: foundItem.userId.id,
+                name: foundItem.userId.name,
+                surname: foundItem.userId.surname,
                 email: foundItem.userId.email,
                 telegram: foundItem.userId.telegram,
                 phone: foundItem.userId.phone

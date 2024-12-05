@@ -193,6 +193,8 @@ const lostItemGetById = async (req, res) => {
             images: lostItem.images,
             user: {
                 id: lostItem.userId.id,
+                name: lostItem.userId.name,
+                surname: lostItem.userId.surname,
                 email: lostItem.userId.email,
                 telegram: lostItem.userId.telegram,
                 phone: lostItem.userId.phone
