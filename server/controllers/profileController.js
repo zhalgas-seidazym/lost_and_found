@@ -80,7 +80,7 @@ const changePassword = async (req, res) => {
                 }
             )
 
-            res.status(400).json({message: 'Passwords changed successfully.'})
+            res.status(200).json({message: 'Passwords changed successfully.'})
         }
         else res.status(400).json({message: 'Unmatching passwords.'})
     }
