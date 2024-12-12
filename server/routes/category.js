@@ -10,7 +10,7 @@ createCategories()
  * /api/categories:
  *   get:
  *     summary: Retrieve a list of categories with counts of lost and found items.
- *     description: This endpoint retrieves all categories and the number of lost and found items associated with each category. The response can be filtered by a query.
+ *     description: This endpoint retrieves all categories and the number of lost and found items associated with each category. The response can be filtered by a query and date range.
  *     parameters:
  *       - in: query
  *         name: query
@@ -18,6 +18,20 @@ createCategories()
  *         schema:
  *           type: string
  *         description: A query string to filter categories by name or other criteria (e.g., "Electronics" or "lostItemsCount>5").
+ *       - in: query
+ *         name: dateFrom
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The start date for filtering lost and found items. Format should be "YYYY-MM-DD".
+ *       - in: query
+ *         name: dateTo
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The end date for filtering lost and found items. Format should be "YYYY-MM-DD".
  *     responses:
  *       200:
  *         description: A list of categories with item counts successfully retrieved.

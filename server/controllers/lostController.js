@@ -13,7 +13,7 @@ const lostItemAdd = async (req, res) => {
             categoryId: categoryId,
             userId: req.user.id,
             images: images,
-            lostDate: lostDate
+            lostDate: new Date(lostDate)
         }).save()
     
         res.status(200).json({
@@ -62,7 +62,7 @@ const lostItemUpdate = async (req, res) => {
                     description: description ? description : lostItem.description,
                     categoryId: categoryId ? categoryId : lostItem.categoryId,
                     images: images,
-                    lostDate: lostDate ? lostDate : lostItem.lostDate
+                    lostDate: lostDate ? new Date(lostDate) : lostItem.lostDate
                 },
                 {new: true}
             )
@@ -122,10 +122,10 @@ const lostItemSearch = async (req, res) => {
         const itemsPerPage = 20
 
         if(dateFrom && dateFrom.length > 0){
-            filter.lostDate = {...filter.lostDate, $gte: dateFrom}
+            filter.lostDate = {...filter.lostDate, $gte: new Date(dateFrom)}
         }
         if(dateTo && dateTo.length > 0){
-            filter.lostDate = {...filter.lostDate, $lte: dateTo}
+            filter.lostDate = {...filter.lostDate, $lte: new Date(dateTo)}
         }
 
         if(query) {

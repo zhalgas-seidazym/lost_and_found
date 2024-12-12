@@ -13,7 +13,7 @@ const foundItemAdd = async (req, res) => {
             categoryId: categoryId,
             userId: req.user.id,
             images: images,
-            foundDate: foundDate
+            foundDate: new Date(foundDate)
         }).save()
     
         res.status(200).json({
@@ -61,7 +61,7 @@ const foundItemUpdate = async (req, res) => {
                     description: description ? description : foundItem.description,
                     categoryId: categoryId ? categoryId : foundItem.categoryId,
                     images: images,
-                    foundDate: foundDate ? foundDate : foundItem.foundDate
+                    foundDate: foundDate ? new Date(foundDate) : foundItem.foundDate
                 },
                 {new: true}
             )
@@ -121,10 +121,10 @@ const foundItemSearch = async (req, res) => {
         const itemsPerPage = 20
         
         if(dateFrom && dateFrom.length > 0){
-            filter.foundDate = {...filter.foundDate, $gte: dateFrom}
+            filter.foundDate = {...filter.foundDate, $gte: new Date(dateFrom)}
         }
         if(dateTo && dateTo.length > 0){
-            filter.foundDate = {...filter.foundDate, $lte: dateTo}
+            filter.foundDate = {...filter.foundDate, $lte: new Date(dateTo)}
         }
 
         if(query) {
