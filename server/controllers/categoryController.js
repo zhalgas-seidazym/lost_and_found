@@ -36,18 +36,18 @@ const getCategories = async (req, res) => {
             options.categoryId = categ._id
             const lostOptions = {...options}
             if(dateFrom && dateFrom.length > 0){
-                lostOptions.lostDate = {...lostOptions.lostDate, $gte: new Date(dateFrom)}
+                lostOptions.lostDate = {...lostOptions.lostDate, $gte: dateFrom}
             }
             if(dateTo && dateTo.length > 0){
-                lostOptions.lostDate = {...lostOptions.lostDate, $lte: new Date(dateTo)}
+                lostOptions.lostDate = {...lostOptions.lostDate, $lte: dateTe}
             }
             
             const foundOptions = {...options}
             if(dateFrom && dateFrom.length > 0){
-                foundOptions.foundDate = {...foundOptions.foundDate, $gte: new Date(dateFrom)}
+                foundOptions.foundDate = {...foundOptions.foundDate, $gte: dateFrom}
             }
             if(dateTo && dateTo.length > 0){
-                foundOptions.foundDate = {...foundOptions.foundDate, $lte: new Date(dateTo)}
+                foundOptions.foundDate = {...foundOptions.foundDate, $lte: dateTo}
             }
             
             const lostItemsCount = await LostItem.countDocuments(lostOptions)
