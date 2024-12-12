@@ -93,7 +93,7 @@ const lostItemDelete = async (req, res) => {
         const lostItem = await LostItem.findById(req.params.id)
 
         if(lostItem){
-            if(lostItem.user != req.user.id) {
+            if(lostItem.userId != req.user.id) {
                 return res.status(400).json({message: 'Access denied.'})
             }
     
