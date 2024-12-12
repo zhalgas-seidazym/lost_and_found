@@ -21,7 +21,8 @@ const createCategories = async () => {
 const getCategories = async (req, res) => {
     try {
         const options = {}
-        const {query} = req.query        
+        const {query, dateFrom, dateTo} = req.query   
+
         if(query){
             options.$or = [
                 { name: { $regex: query, $options: 'i' } }, 
@@ -34,7 +35,20 @@ const getCategories = async (req, res) => {
         categories = await Promise.all(categories.map(async (categ) => {
             options.categoryId = categ._id
             const lostOptions = {...options}
+            if(dateFrom && dateFrom.length > 0){
+                lostOptions.lostDate = {...options.lostDate, $gte: new Date(dateFrom)}
+            }
+            if(dateTo && dateTo.length > 0){
+                lostOptions.lostDate = {...options.lostDate, $lte: new Date(dateTo)}
+            }
+            
             const foundOptions = {...options}
+            if(dateFrom && dateFrom.length > 0){
+                foundOptions.foundDate = {...options.foundDate, $gte: new Date(dateFrom)}
+            }
+            if(dateTo && dateTo.length > 0){
+                foundOptions.foundDate = {...options.foundDate, $lte: new Date(dateTo)}
+            }
             
             const lostItemsCount = await LostItem.countDocuments(lostOptions)
             const foundItemsCount = await FoundItem.countDocuments(foundOptions)
