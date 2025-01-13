@@ -4,12 +4,14 @@ class BaseRepository {
     }
 
     async findById(id) {
-        try{
-            const res = await this.model.findById(id);
-            return res ? res : null;
-        }catch (error){
+        try {
+            if (!id) {
+                throw new Error('ID is required');
+            }
+            return await this.model.findById(id);
+        } catch (error) {
             console.error('Error in findById:', error.message);
-            throw new Error('Unable to fetch data.');
+            throw new Error('Unable to fetch the document. Please try again later.');
         }
     }
 
@@ -33,21 +35,52 @@ class BaseRepository {
         }
     }
 
+    async create(data) {
+        try {
+            if (!data || (typeof data !== 'object' && !Array.isArray(data))) {
+                throw new Error('Invalid data');
+            }
 
-    async create(user) {
-        const newData = new this.model(user);
-        return await newData.save();
+            if (Array.isArray(data)) {
+                return await this.model.insertMany(data);
+            } else {
+                const newDocument = new this.model(data);
+                return await newDocument.save();
+            }
+        } catch (error) {
+            console.error('Error creating document:', error.message);
+            throw new Error('Unable to create the document. Please try again later.');
+        }
     }
 
     async update(id, updateData) {
-        const updatedData = await this.model.findByIdAndUpdate(id, updateData, {
-            new: true, runValidators: true,
-        });
-        return updatedData ? updatedData : null;
+        try {
+            if (!id) {
+                throw new Error('ID is required');
+            }
+            if (!updateData || typeof updateData !== 'object') {
+                throw new Error('Invalid update data');
+            }
+            return await this.model.findByIdAndUpdate(id, updateData, {
+                new: true,
+                runValidators: true,
+            });
+        } catch (error) {
+            console.error('Error updating document:', error.message);
+            throw new Error('Unable to update the document. Please try again later.');
+        }
     }
 
     async delete(id) {
-        return this.model.findByIdAndDelete(id);
+        try {
+            if (!id) {
+                throw new Error('ID is required');
+            }
+            return await this.model.findByIdAndDelete(id);
+        } catch (error) {
+            console.error('Error in delete:', error.message);
+            throw new Error('Unable to delete the document. Please try again later.');
+        }
     }
 }
 

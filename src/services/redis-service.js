@@ -1,4 +1,4 @@
-const {connectToRedis} = require('../config/redis')
+const {connectToRedis} = require('./../config/redis')
 
 class RedisService {
     constructor() {

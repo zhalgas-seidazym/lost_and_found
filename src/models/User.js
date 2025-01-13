@@ -16,7 +16,7 @@ const userSchema = new Schema({
         unique: true,
         validate: {
             validator: function (value) {
-                return /^.+@sdu\.edu\.kz$/.test(value);
+                return /^[^\s@]+@([a-zA-Z0-9.-]+\.)?sdu\.edu\.kz$/.test(value);
             },
             message: 'Email must be a valid sdu.edu.kz email address'
         }
@@ -25,7 +25,7 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    role: {
+    roleId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         required: true
@@ -35,7 +35,7 @@ const userSchema = new Schema({
         default: false,
     },
     telegram: String,
-    phone: String
+    phoneNumber: String
 });
 
 module.exports = mongoose.model('User', userSchema);

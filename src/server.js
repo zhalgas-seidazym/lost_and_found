@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const config = require('./config/config')
 const {connectToDB} = require('./config/db');
-const globalRouters = require('./api/global-routers');
+const globalRouters = require('./api/routers/global-routers');
 
 connectToDB();
 
