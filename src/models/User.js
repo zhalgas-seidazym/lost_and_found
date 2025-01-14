@@ -30,10 +30,6 @@ const userSchema = new Schema({
         ref: 'Role',
         required: true
     },
-    verifiedUser: {
-        type: Boolean,
-        default: false,
-    },
     telegram: String,
     phoneNumber: String
 });

@@ -44,8 +44,8 @@ class EmailService {
                     <p>Best regards,<br>Your Company Team</p>
                 </div>
                 <div style="text-align: center; font-size: 12px; color: #888888; margin-top: 20px;">
-                    <p>&copy; 2023 Your Company Name. All rights reserved.</p>
-                    <p>123 Main St, Anytown, ST 12345</p>
+                    <p>&copy; 2024 Lost & Found Service. All rights reserved.</p>
+                    <p>Abylaikhan 1</p>
                 </div>
             </div>
         `;
@@ -55,7 +55,7 @@ class EmailService {
         return `
             <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; background-color: #f4f4f4;">
                 <div style="text-align: center; padding: 10px; background-color: #4CAF50; color: #ffffff;">
-                    <h1 style="margin: 0;">Your Company Name</h1>
+                    <h1 style="margin: 0;">Lost & Found Service</h1>
                 </div>
                 <div style="background-color: #ffffff; padding: 20px; margin-top: 20px; border-radius: 5px;">
                     <h2 style="color: #4CAF50; margin-top: 0;">Email Verification</h2>
@@ -72,8 +72,8 @@ class EmailService {
                     <p>Best regards,<br>Your Company Team</p>
                 </div>
                 <div style="text-align: center; font-size: 12px; color: #888888; margin-top: 20px;">
-                    <p>&copy; 2023 Your Company Name. All rights reserved.</p>
-                    <p>123 Main St, Anytown, ST 12345</p>
+                    <p>&copy; 2024 Lost & Found Service. All rights reserved.</p>
+                    <p>Abylaikhan 1</p>
                 </div>
             </div>
         `;

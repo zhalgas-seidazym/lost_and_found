@@ -16,12 +16,12 @@ class UserMiddleware {
             }
 
             if(Object.keys(errors).length > 0){
-                res.status(400).json(errors)
+                res.status(400).json({detail: errors})
             }
             else next()
         }
         catch(err){
-            res.status(500).json({message: err.message || 'An unexpected error occurred.' })
+            res.status(500).json({detail: err.message || 'An unexpected error occurred.' })
         }
     }
 }

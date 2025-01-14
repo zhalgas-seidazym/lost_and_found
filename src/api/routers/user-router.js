@@ -13,6 +13,9 @@ const emailService = new EmailService();
 const redisService = new RedisService();
 const userController = new UserController(userRepository, roleRepository, redisService, emailService);
 
-router.post('/sign-up', userMiddleware.validateSignUp, (req, res) => userController.signUp(req, res))
+router.post('/auth/sign-up', userMiddleware.validateSignUp, (req, res) => userController.signUp(req, res));
+router.post('/auth/send-verification', (req, res) => userController.sendVerificationToEmail(req, res));
+router.post('/auth/check-verification', (req, res) => userController.checkVerificationToken(req, res));
+
 
 module.exports = router;

@@ -18,7 +18,9 @@ class RedisService {
 
     async set(key, value, expiry = 300) {
         await this.init();
-        return await this.client.set(key, value, {
+        const serializedValue = typeof value === 'object' ? JSON.stringify(value) : value;
+
+        return await this.client.set(key, serializedValue, {
             EX: expiry,
         });
     }
