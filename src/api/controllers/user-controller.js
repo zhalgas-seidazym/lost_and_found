@@ -30,9 +30,15 @@ class UserController {
             const accessToken = jwtEncode(payload);
             const refreshToken = jwtEncode(payload, "7d");
 
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'Strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+
             res.status(200).json({
                 accessToken,
-                refreshToken,
                 role: role.name
             });
         }catch(error){
@@ -59,6 +65,21 @@ class UserController {
 
             return res.status(200).json({detail: "Please pass verification to finish creating user."});
         }catch (error){
+            console.log(error.message);
+            res.status(500).json({"detail": "Internal Server Error."});
+        }
+    }
+
+    async logout(req, res){
+        try {
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'Strict'
+            });
+
+            return res.status(200).json({ detail: 'Logged out successfully.' });
+        }catch(error){
             console.log(error.message);
             res.status(500).json({"detail": "Internal Server Error."});
         }
@@ -147,38 +168,45 @@ class UserController {
         }
     }
 
-    async refreshToken(req, res){
-        const {refreshToken} = req.body;
+    async refreshToken(req, res) {
+        const { refreshToken } = req.cookies;
 
-        try{
-            if(!refreshToken){
-                return res.status(401).json({detail: 'Refresh token is invalid or expired.'});
+        try {
+            if (!refreshToken) {
+                return res.status(401).json({ detail: 'Refresh token is invalid or expired.' });
             }
 
             let decoded;
-            try{
+            try {
                 decoded = jwtDecode(refreshToken);
-            }catch(error){
-                res.status(401).json({detail: 'Refresh token is invalid or expired.'});
+            } catch (error) {
+                return res.status(401).json({ detail: 'Refresh token is invalid or expired.' });
             }
 
             if (!decoded || !decoded.userId) {
-                return res.status(401).send({detail: "Refresh token is invalid or expired."});
+                return res.status(401).send({ detail: "Refresh token is invalid or expired." });
             }
 
             const dbUser = await this.userRepository.findById(decoded.userId);
             if (!dbUser) {
-                return res.status(401).send({detail: "Refresh token is invalid or expired."});
+                return res.status(401).send({ detail: "Refresh token is invalid or expired." });
             }
 
-            const payload = {userId: dbUser.id};
+            const payload = { userId: dbUser.id };
             const accessToken = jwtEncode(payload);
             const newRefreshToken = jwtEncode(payload, '7d');
 
-            return res.status(200).send({accessToken, refreshToken: newRefreshToken});
-        }catch (error){
-            console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.cookie('refreshToken', newRefreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'Strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+
+            return res.status(200).json({ accessToken });
+        } catch (error) {
+            console.error(error.message);
+            return res.status(500).json({ detail: "Internal Server Error." });
         }
     }
 

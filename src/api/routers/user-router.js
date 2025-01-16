@@ -19,7 +19,13 @@ router.post('/auth/check-verification', (req, res) => userController.checkVerifi
 
 router.post('/auth/sign-in', (req, res) => userController.signIn(req, res));
 
-router.post('/refresh', (req, res) => userController.refreshToken(req, res));
+router.post(
+    '/auth/logout',
+    (req, res, next) => userMiddleware.isAuth(req, res, next),
+    (req, res) => userController.logout(req, res)
+);
+
+router.get('/auth/refresh', (req, res) => userController.refreshToken(req, res));
 
 router.post('/password/send-token', (req, res) => userController.sendPasswordResetToken(req, res));
 router.put('/password/change', (req, res) => userController.checkPasswordTokenAndResetPassword(req, res));
@@ -27,8 +33,13 @@ router.put('/password/change', (req, res) => userController.checkPasswordTokenAn
 router.get(
     '/profile',
     (req, res, next) => userMiddleware.isAuth(req, res, next),
-    (req, res) => userController.me(req, res));
+    (req, res) => userController.me(req, res)
+);
 
-router.put('/profile', (req, res, next) => userMiddleware.isAuth(req, res, next), (req, res) => userController.updateProfile(req, res));
+router.put(
+    '/profile',
+    (req, res, next) => userMiddleware.isAuth(req, res, next),
+    (req, res) => userController.updateProfile(req, res)
+);
 
 module.exports = router;
