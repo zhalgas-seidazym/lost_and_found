@@ -19,11 +19,7 @@ router.post('/auth/check-verification', (req, res) => userController.checkVerifi
 
 router.post('/auth/sign-in', (req, res) => userController.signIn(req, res));
 
-router.post(
-    '/auth/logout',
-    (req, res, next) => userMiddleware.isAuth(req, res, next),
-    (req, res) => userController.logout(req, res)
-);
+router.post('/auth/logout', (req, res) => userController.logout(req, res));
 
 router.get('/auth/refresh', (req, res) => userController.refreshToken(req, res));
 
