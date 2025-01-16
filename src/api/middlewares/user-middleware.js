@@ -1,4 +1,11 @@
+const {jwtEncode, jwtDecode} = require('./../../utils/jwt')
+
 class UserMiddleware {
+    constructor(userRepository, roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
+
     validateSignUp (req, res, next) {
         try{
             const errors = {}
@@ -22,6 +29,25 @@ class UserMiddleware {
         }
         catch(err){
             res.status(500).json({detail: err.message || 'An unexpected error occurred.' })
+        }
+    }
+
+    async isAuth(req, res, next){
+        try {
+            const token = req.headers.authorization?.split(' ')[1];
+            if (!token) {
+                return res.status(401).json({"detail": "Unauthorized"});
+            }
+            const {userId} = jwtDecode(token);
+            const user = await this.userRepository.findById(userId);
+            if (!user) {
+                return res.status(401).json({"detail": "Unauthorized"});
+            }
+            req.user = user;
+            next();
+        } catch (err) {
+            console.error(err);
+            return res.status(401).json({"detail": "Invalid token or unauthorized."});
         }
     }
 }

@@ -6,7 +6,6 @@ class UserRepository extends BaseRepository {
         super(UserModel);
     }
 
-    async
 
     async findByEmail(email) {
         try {

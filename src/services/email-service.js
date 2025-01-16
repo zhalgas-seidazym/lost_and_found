@@ -79,7 +79,7 @@ class EmailService {
         `;
     }
 
-    async sendPasswordResetEmail(to, resetLink) {
+    async sendPasswordResetToken(to, resetLink) {
         const mailOptions = {
             from: config.rootEmail,
             to: to,

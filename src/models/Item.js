@@ -27,7 +27,7 @@ const itemSchema = new Schema(
         },
         images: [{
             type: String,
-            required: false
+            required: true
         }],
         date: {
             type: Schema.Types.Date,

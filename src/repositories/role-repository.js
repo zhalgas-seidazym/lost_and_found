@@ -12,8 +12,7 @@ class RoleRepository extends BaseRepository {
                 throw new Error('Role name is required');
             }
 
-            const roleId = await this.model.find({name});
-            return roleId[0];
+            return await this.model.findOne({name});
         }catch (error){
             console.log('Error in findByName:', error.message);
             throw new Error('Unable to fetch the document. Please try again later.');
