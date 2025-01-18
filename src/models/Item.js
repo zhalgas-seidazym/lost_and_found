@@ -1,5 +1,7 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const CategoryModel = require('./Category');
 
 const itemSchema = new Schema(
     {
@@ -43,7 +45,7 @@ const itemSchema = new Schema(
             ref: 'Category',
             required: true
         },
-        applied: {
+        approved: {
             type: Schema.Types.Boolean,
             default: false
         }
@@ -51,6 +53,6 @@ const itemSchema = new Schema(
     {
         timestamps: true,
     }
-)
+);
 
 module.exports = mongoose.model('Item', itemSchema)

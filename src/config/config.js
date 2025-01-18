@@ -17,4 +17,6 @@ module.exports = {
     redisPassword: process.env.REDIS_PASSWORD,
     rootEmail: process.env.ROOT_EMAIL,
     rootEmailPass: process.env.ROOT_EMAIL_PASS,
-}
+    gcsProjectId: process.env.GCS_PROJECT_ID,
+    gcsBucketName: process.env.GCS_BUCKET_NAME
+};

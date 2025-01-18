@@ -4,16 +4,16 @@ const router = express.Router();
 const {UserRepository, RoleRepository} = require('../../repositories/global-repositories');
 const {UserController} = require('../controllers/global-controllers');
 const {EmailService, RedisService} = require('../../services/global-services');
-const {UserMiddleware} = require("../middlewares/global-middlewares");
+const Middleware = require("../middlewares/middleware");
 
 const userRepository = new UserRepository();
 const roleRepository = new RoleRepository();
 const emailService = new EmailService();
 const redisService = new RedisService();
-const userMiddleware = new UserMiddleware(userRepository, roleRepository);
+const middleware = new Middleware(userRepository, roleRepository);
 const userController = new UserController(userRepository, roleRepository, redisService, emailService);
 
-router.post('/auth/sign-up', userMiddleware.validateSignUp, (req, res) => userController.signUp(req, res));
+router.post('/auth/sign-up', middleware.validateSignUp, (req, res) => userController.signUp(req, res));
 router.post('/auth/send-verification', (req, res) => userController.sendVerificationToEmail(req, res));
 router.post('/auth/check-verification', (req, res) => userController.checkVerificationToken(req, res));
 
@@ -28,13 +28,13 @@ router.put('/password/change', (req, res) => userController.checkPasswordTokenAn
 
 router.get(
     '/profile',
-    (req, res, next) => userMiddleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAuth(req, res, next),
     (req, res) => userController.me(req, res)
 );
 
 router.put(
     '/profile',
-    (req, res, next) => userMiddleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAuth(req, res, next),
     (req, res) => userController.updateProfile(req, res)
 );
 

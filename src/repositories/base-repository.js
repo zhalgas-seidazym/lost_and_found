@@ -11,7 +11,7 @@ class BaseRepository {
             return await this.model.findById(id);
         } catch (error) {
             console.error('Error in findById:', error.message);
-            throw new Error('Unable to fetch the document. Please try again later.');
+            throw new Error('Error in findById:', error.message);
         }
     }
 
@@ -31,14 +31,14 @@ class BaseRepository {
             return await query.exec();
         } catch (error) {
             console.error('Error in findAll:', error.message);
-            throw new Error('Unable to fetch data.');
+            throw new Error('Error in findAll:', error.message);
         }
     }
 
     async create(data) {
         try {
             if (!data || (typeof data !== 'object' && !Array.isArray(data))) {
-                throw new Error('Invalid data');
+                throw new Error('Invalid data.');
             }
 
             if (Array.isArray(data)) {
@@ -49,7 +49,7 @@ class BaseRepository {
             }
         } catch (error) {
             console.error('Error creating document:', error.message);
-            throw new Error('Unable to create the document. Please try again later.');
+            throw new Error('Error creating document:', error.message);
         }
     }
 
@@ -67,7 +67,7 @@ class BaseRepository {
             });
         } catch (error) {
             console.error('Error updating document:', error.message);
-            throw new Error('Unable to update the document. Please try again later.');
+            throw new Error('Error updating document:', error.message);
         }
     }
 
@@ -79,7 +79,7 @@ class BaseRepository {
             return await this.model.findByIdAndDelete(id);
         } catch (error) {
             console.error('Error in delete:', error.message);
-            throw new Error('Unable to delete the document. Please try again later.');
+            throw new Error('Error in delete:', error.message);
         }
     }
 }

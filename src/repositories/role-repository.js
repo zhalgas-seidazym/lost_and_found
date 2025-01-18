@@ -15,7 +15,7 @@ class RoleRepository extends BaseRepository {
             return await this.model.findOne({name});
         }catch (error){
             console.log('Error in findByName:', error.message);
-            throw new Error('Unable to fetch the document. Please try again later.');
+            throw new Error('Error in findByName:', error.message);
         }
     }
 }

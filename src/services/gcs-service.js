@@ -2,13 +2,15 @@ const multer = require("multer");
 const { Storage } = require("@google-cloud/storage");
 const path = require("path");
 
+const config = require('../config/config')
+
 class GCSService {
     constructor() {
         this.storage = new Storage({
             keyFilename: path.join(__dirname, '..', 'config', "gcloud-key.json"),
-            projectId: "social-media-back",
+            projectId: config.gcsProjectId,
         });
-        this.bucketName = "lost_and_found_storage";
+        this.bucketName = config.gcsBucketName;
         this.bucket = this.storage.bucket(this.bucketName);
         this.multerStorage = multer.memoryStorage();
         this.upload = multer({
@@ -66,19 +68,32 @@ class GCSService {
             });
 
             blobStream.end(file.buffer);
+            console.log(`File ${file.originalname} uploaded to storage.`);
         });
     }
 
-    async deleteFiles(fileNames) {
+    async deleteFile(fileName) {
         try {
-            const deletePromises = fileNames.map((fileName) => this.bucket.file(fileName).delete());
-            await Promise.all(deletePromises);
-            console.log("All files deleted successfully.");
+            if (!fileName) {
+                throw new Error("File name is required");
+            }
+
+            const file = this.bucket.file(fileName);
+
+            const [exists] = await file.exists();
+            if (!exists) {
+                throw new Error(`File ${fileName} does not exist.`);
+            }
+
+            await file.delete();
+            console.log(`File ${fileName} deleted from storage.`);
         } catch (error) {
-            console.error("Error deleting files:", error.message);
-            throw new Error("Failed to delete some files.");
+            console.error(`Error deleting file ${fileName}:`, error.message);
+            throw new Error(error.message);
         }
     }
+
+
 }
 
 module.exports = GCSService;

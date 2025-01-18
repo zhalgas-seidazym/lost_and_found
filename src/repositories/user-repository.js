@@ -15,7 +15,7 @@ class UserRepository extends BaseRepository {
             return await this.model.findOne({email});
         } catch (error) {
             console.error('Error in findByEmail:', error.message);
-            throw new Error('Unable to fetch the document by email. Please try again later.');
+            throw new Error('Error in findByEmail:', error.message);
         }
     }
 
@@ -27,7 +27,7 @@ class UserRepository extends BaseRepository {
             return await this.model.findOne({phoneNumber});
         } catch (error) {
             console.error('Error in findByPhoneNumber:', error.message);
-            throw new Error('Unable to fetch the document by phone number. Please try again later.');
+            throw new Error('Error in findByPhoneNumber:', error.message);
         }
     }
 
@@ -39,7 +39,7 @@ class UserRepository extends BaseRepository {
             return await this.model.findOne({telegram});
         } catch (error) {
             console.error('Error in findByTelegram:', error.message);
-            throw new Error('Unable to fetch the document by telegram. Please try again later.');
+            throw new Error('Error in findByTelegram:', error.message);
         }
     }
 }
