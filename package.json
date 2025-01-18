@@ -18,6 +18,7 @@
   "homepage": "https://github.com/zhalgas-seidazym/lost_and_found#readme",
   "description": "",
   "dependencies": {
+    "@google-cloud/storage": "^7.15.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
