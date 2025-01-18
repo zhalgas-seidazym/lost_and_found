@@ -38,6 +38,8 @@ router.put(
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.validateId(req, res, next),
     (req, res, next) => middleware.checkOwnership(req, res, next),
+    gcsService.upload.array('images', 5),
+    (req, res, next) => gcsService.uploadToGCS(req, res, next),
     (req, res) => itemController.updateItem(req, res)
 );
 

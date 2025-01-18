@@ -60,7 +60,27 @@ class ItemController{
     async updateItem(req, res){
         const {id} = req.params;
         const {name, description, date, categoryId, type} = req.body;
-        const user = req.user;
+        const fileUrls = req.fileUrls;
+
+        try{
+            const item = await this.itemRepository.findById(id);
+            if(fileUrls.length === 0 && item.images.length === 0){
+                return res.status(400).json({"detail": "Images are required."});
+            }
+
+            item.name = name || item.name;
+            item.description = description || item.description;
+            item.type = type || item.type;
+            item.date = date || item.date;
+            item.categoryId = categoryId || item.categoryId;
+            item.images = fileUrls || item.images;
+            await item.save();
+
+            res.status(204).json({message: 'Item updated successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({"detail": "Internal server error."});
+        }
     }
 }
 
