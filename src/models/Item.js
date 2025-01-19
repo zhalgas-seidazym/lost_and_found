@@ -45,7 +45,7 @@ const itemSchema = new Schema(
             ref: 'Category',
             required: true
         },
-        approved: {
+        status: {
             type: String,
             required: true,
             default: 'waiting',

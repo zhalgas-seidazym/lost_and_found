@@ -57,7 +57,7 @@ router.put(
     (req, res, next) => middleware.isAdmin(req, res, next),
     (req, res, next) => middleware.validateId(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
-    (req, res) => itemController.approveItem(req, res)
+    (req, res) => itemController.updateItemStatus(req, res)
 );
 
 module.exports = router;

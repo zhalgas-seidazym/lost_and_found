@@ -74,6 +74,7 @@ class ItemController{
             item.date = date || item.date;
             item.categoryId = categoryId || item.categoryId;
             item.images = fileUrls || item.images;
+            item.status = ITEM_STATUS.WAITING
             await item.save();
 
             res.status(204).json({message: 'Item updated successfully.'});
@@ -100,7 +101,7 @@ class ItemController{
         }
     }
 
-    async approveItem(req, res){
+    async updateItemStatus(req, res){
         const {id} = req.params;
         const {itemStatus} = req.body;
 
@@ -110,7 +111,7 @@ class ItemController{
             }
 
             const item = await this.itemRepository.findById(id);
-            item.approved = itemStatus;
+            item.status = itemStatus;
             await item.save();
 
             res.status(204).json({message: 'Item approved successfully.'});
