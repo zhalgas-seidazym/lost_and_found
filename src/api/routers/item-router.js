@@ -29,7 +29,7 @@ router.delete(
     '/update/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.validateId(req, res, next),
-    (req, res, next) => middleware.checkOwnership(req, res, next),
+    (req, res, next) => middleware.checkAccessToItem(req, res, next),
     (req, res) => itemController.deleteImage(req, res)
 );
 
@@ -37,10 +37,18 @@ router.put(
     '/update/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.validateId(req, res, next),
-    (req, res, next) => middleware.checkOwnership(req, res, next),
+    (req, res, next) => middleware.checkAccessToItem(req, res, next),
     gcsService.upload.array('images', 5),
     (req, res, next) => gcsService.uploadToGCS(req, res, next),
     (req, res) => itemController.updateItem(req, res)
+);
+
+router.delete(
+    '/delete/:id',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res, next) => middleware.validateId(req, res, next),
+    (req, res, next) => middleware.checkAccessToItem(req, res, next),
+    (req, res) => itemController.deleteItem(req, res)
 );
 
 module.exports = router;

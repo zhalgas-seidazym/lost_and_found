@@ -82,6 +82,23 @@ class ItemController{
             return res.status(500).json({"detail": "Internal server error."});
         }
     }
+
+    async deleteItem(req, res){
+        const {id} = req.params;
+
+        try{
+            const item = await this.itemRepository.findByIdAndGetImages(id);
+
+            const images = item.images.map((image) => this.gcsService.deleteFile(image.split('/')[4]));
+            await Promise.all(images);
+            await this.itemRepository.delete(id);
+
+            res.status(204).json({message: 'Item deleted successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({"detail": "Internal server error."});
+        }
+    }
 }
 
 module.exports = ItemController;

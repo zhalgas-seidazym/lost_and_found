@@ -33,7 +33,7 @@ router.get(
 );
 
 router.put(
-    '/profile',
+    '/profile/update',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res) => userController.updateProfile(req, res)
 );

@@ -81,6 +81,24 @@ class Middleware {
         }
     }
 
+    async isAdmin(req, res, next){
+        const user = req.user;
+
+        try{
+            const role = await this.roleRepository.findById(user.roleId);
+
+            if(role.name === 'admin'){
+                req.isAdmin = true;
+                next();
+            }else{
+                return res.status(403).json({"detail": "Forbidden."});
+            }
+        }catch (err){
+            console.error(err);
+            return res.status(401).json({"detail": "Invalid token or unauthorized."});
+        }
+    }
+
     async validateId(req, res, next){
         try{
             if(!ObjectId.isValid(req.params.id)){
@@ -92,16 +110,17 @@ class Middleware {
         }
     }
 
-    async checkOwnership(req, res, next){
+    async checkAccessToItem(req, res, next){
         const {id} = req.params;
         const user = req.user;
+        const isAdmin = req.isAdmin || false;
 
         try{
             const item = await this.itemRepository.findById(id);
             if(!item){
                 return res.status(404).json({"detail": "Item not found."});
             }
-            if(item.userId.toString() !== user.id){
+            if(item.userId.toString() !== user.id && !isAdmin){
                 return res.status(403).json({"detail": "Forbidden."});
             }
 
