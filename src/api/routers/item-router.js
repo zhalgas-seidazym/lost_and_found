@@ -51,4 +51,13 @@ router.delete(
     (req, res) => itemController.deleteItem(req, res)
 );
 
+router.put(
+    '/update/status/:id',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAdmin(req, res, next),
+    (req, res, next) => middleware.validateId(req, res, next),
+    (req, res, next) => middleware.checkAccessToItem(req, res, next),
+    (req, res) => itemController.approveItem(req, res)
+);
+
 module.exports = router;

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const {hashPassword, comparePassword} = require('../../utils/bcrypt')
 const {jwtEncode, jwtDecode} = require('../../utils/jwt');
+const {ROLES} = require('../../utils/constants')
 
 class UserController {
     constructor(userRepository, roleRepository, redisService, emailService) {
@@ -56,7 +57,7 @@ class UserController {
                 return res.status(409).send({detail: 'User with this email already exists.'});
             }
 
-            const roleId = await this.roleRepository.findByName('client')
+            const roleId = await this.roleRepository.findByName(ROLES.CLIENT)
 
             const hashedPassword = await hashPassword(password);
             let user = {name, surname, email, password: hashedPassword, roleId: roleId.id};

@@ -1,4 +1,5 @@
 const {jwtEncode, jwtDecode} = require('./../../utils/jwt')
+const {ROLES, ITEM_TYPES} = require("../../utils/constants");
 const { ObjectId } = require('mongoose').Types;
 
 class Middleware {
@@ -49,7 +50,7 @@ class Middleware {
             if(!req.fileUrls || req.fileUrls.length === 0){
                 errors.images = "Images are required.";
             }
-            if(!req.body.type || (req.body.type !== 'lost' && req.body.type !== 'found')){
+            if(!req.body.type || !Object.values(ITEM_TYPES).includes(req.body.type)){
                 errors.type = "Type is incorrect. It should be either 'lost' or 'found'.";
             }
 
@@ -87,11 +88,11 @@ class Middleware {
         try{
             const role = await this.roleRepository.findById(user.roleId);
 
-            if(role.name === 'admin'){
+            if(role.name === ROLES.ADMIN){
                 req.isAdmin = true;
                 next();
             }else{
-                return res.status(403).json({"detail": "Forbidden."});
+                return res.status(403).json({"detail": "Access denied."});
             }
         }catch (err){
             console.error(err);
@@ -121,7 +122,7 @@ class Middleware {
                 return res.status(404).json({"detail": "Item not found."});
             }
             if(item.userId.toString() !== user.id && !isAdmin){
-                return res.status(403).json({"detail": "Forbidden."});
+                return res.status(403).json({"detail": "Access denied."});
             }
 
             next();

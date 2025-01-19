@@ -46,8 +46,10 @@ const itemSchema = new Schema(
             required: true
         },
         approved: {
-            type: Schema.Types.Boolean,
-            default: false
+            type: String,
+            required: true,
+            default: 'waiting',
+            enum: ['waiting', 'approved', 'rejected']
         }
     },
     {

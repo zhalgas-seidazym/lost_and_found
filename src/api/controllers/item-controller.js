@@ -1,3 +1,4 @@
+const {ITEM_STATUS} = require("../../utils/constants");
 
 class ItemController{
     constructor(itemRepository, categoryRepository, gcsService) {
@@ -27,7 +28,6 @@ class ItemController{
                 categoryId,
                 images: fileUrls,
                 userId: user.id,
-                approved: false,
             });
 
             res.status(200).json({message: 'Item created successfully.'});
@@ -94,6 +94,26 @@ class ItemController{
             await this.itemRepository.delete(id);
 
             res.status(204).json({message: 'Item deleted successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({"detail": "Internal server error."});
+        }
+    }
+
+    async approveItem(req, res){
+        const {id} = req.params;
+        const {itemStatus} = req.body;
+
+        try{
+            if(!Object.values(ITEM_STATUS).includes(itemStatus)){
+                return res.status(400).json({"detail": "Incorrect item status."});
+            }
+
+            const item = await this.itemRepository.findById(id);
+            item.approved = itemStatus;
+            await item.save();
+
+            res.status(204).json({message: 'Item approved successfully.'});
         }catch (error){
             console.log(error.message);
             return res.status(500).json({"detail": "Internal server error."});
