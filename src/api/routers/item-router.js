@@ -13,7 +13,7 @@ const userRepository = new UserRepository();
 const categoryRepository = new CategoryRepository();
 const roleRepository = new RoleRepository();
 
-const itemController = new ItemController(itemRepository, categoryRepository, gcsService);
+const itemController = new ItemController(itemRepository, categoryRepository, roleRepository, gcsService);
 const middleware = new Middleware(userRepository, roleRepository, itemRepository);
 
 router.post(

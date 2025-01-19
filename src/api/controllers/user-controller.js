@@ -17,12 +17,12 @@ class UserController {
         try{
             const user = await this.userRepository.findByEmail(email);
             if(!user){
-                return res.status(401).json({ detail: "Invalid email or password." });
+                return res.status(401).json({detail: "Invalid email or password." });
             }
 
             const isPasswordMatch = await comparePassword(password, user.password);
             if(!isPasswordMatch){
-                return res.status(401).json({ detail: "Invalid email or password." });
+                return res.status(401).json({detail: "Invalid email or password." });
             }
 
             const role = await this.roleRepository.findById(user.roleId);
@@ -44,7 +44,7 @@ class UserController {
             });
         }catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -67,7 +67,7 @@ class UserController {
             return res.status(200).json({detail: "Please pass verification to finish creating user."});
         }catch (error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -79,10 +79,10 @@ class UserController {
                 sameSite: 'Strict'
             });
 
-            return res.status(200).json({ detail: 'Logged out successfully.' });
+            return res.status(200).json({detail: 'Logged out successfully.' });
         }catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -104,7 +104,7 @@ class UserController {
             tokenRedis = JSON.parse(tokenRedis);
             if(tokenRedis && tokenRedis.resendTime > Date.now()){
                 const remainingTime = Math.ceil((tokenRedis.resendTime - Date.now()) / 1000);
-                return res.status(429).json({ detail: `Please wait ${remainingTime} seconds before resending.` });
+                return res.status(429).json({detail: `Please wait ${remainingTime} seconds before resending.` });
             }
 
             const verToken = crypto.randomBytes(32).toString('hex');
@@ -165,7 +165,7 @@ class UserController {
             res.status(201).json({detail: "User created successfully."});
         }catch (error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -174,23 +174,23 @@ class UserController {
 
         try {
             if (!refreshToken) {
-                return res.status(401).json({ detail: 'Refresh token is invalid or expired.' });
+                return res.status(401).json({detail: 'Refresh token is invalid or expired.' });
             }
 
             let decoded;
             try {
                 decoded = jwtDecode(refreshToken);
             } catch (error) {
-                return res.status(401).json({ detail: 'Refresh token is invalid or expired.' });
+                return res.status(401).json({detail: 'Refresh token is invalid or expired.' });
             }
 
             if (!decoded || !decoded.userId) {
-                return res.status(401).send({ detail: "Refresh token is invalid or expired." });
+                return res.status(401).send({detail: "Refresh token is invalid or expired." });
             }
 
             const dbUser = await this.userRepository.findById(decoded.userId);
             if (!dbUser) {
-                return res.status(401).send({ detail: "Refresh token is invalid or expired." });
+                return res.status(401).send({detail: "Refresh token is invalid or expired." });
             }
 
             const payload = { userId: dbUser.id };
@@ -207,7 +207,7 @@ class UserController {
             return res.status(200).json({ accessToken });
         } catch (error) {
             console.error(error.message);
-            return res.status(500).json({ detail: "Internal Server Error." });
+            return res.status(500).json({detail: "Internal Server Error." });
         }
     }
 
@@ -235,7 +235,7 @@ class UserController {
             res.status(200).json({detail: 'Password reset link sent successfully.'});
         }catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -266,7 +266,7 @@ class UserController {
             res.status(200).json({detail: 'Password reset successfully.'});
         }catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -283,7 +283,7 @@ class UserController {
             });
         }catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 
@@ -325,7 +325,7 @@ class UserController {
         }
         catch(error){
             console.log(error.message);
-            res.status(500).json({"detail": "Internal Server Error."});
+            res.status(500).json({detail: "Internal Server Error."});
         }
     }
 }
