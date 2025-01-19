@@ -3,12 +3,21 @@ class BaseRepository {
         this.model = model;
     }
 
-    async findById(id) {
+    async findById(id, populateFields = []) {
         try {
             if (!id) {
                 throw new Error('ID is required');
             }
-            return await this.model.findById(id);
+
+            let query = this.model.findById(id);
+
+            if (Array.isArray(populateFields) && populateFields.length > 0) {
+                populateFields.forEach((field) => {
+                    query = query.populate(field);
+                });
+            }
+
+            return await query;
         } catch (error) {
             console.error('Error in findById:', error.message);
             throw new Error('Error in findById:', error.message);

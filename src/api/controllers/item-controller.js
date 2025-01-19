@@ -33,18 +33,7 @@ class ItemController{
 
             res.status(200).json({
                 detail: 'Item created successfully.',
-                item: {
-                    id: item.id,
-                    name: item.name,
-                    description: item.description,
-                    type: item.type,
-                    date: item.date,
-                    categoryId: item.categoryId,
-                    images: item.images,
-                    userId: item.userId,
-                    status: item.status,
-                    createdAt: item.createdAt,
-                }
+                itemId: item.id,
             });
         }catch (error){
             console.log(error.message);
@@ -137,20 +126,42 @@ class ItemController{
     }
 
     async getItemById(req, res){
-        const item = req.item;
+        const {id} = req.params;
         const user = req.user;
 
         try{
+            const item = await this.itemRepository.findById(id, ['userId', 'categoryId']);
+
             const role = await this.roleRepository.findById(user.roleId);
             if(item.status !== ITEM_STATUS.APPROVED){
-                if(!user.id !== item.userId && role.name !== ROLES.ADMIN){
+                if(user.id !== item.userId.id && role.name !== ROLES.ADMIN){
                     return res.status(403).json({detail: "Access denied."});
                 }
             }
 
-            const category = await this.categoryRepository.findById(item.categoryId);
-
-            res.status(200).json()
+            res.status(200).json({
+                item: {
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    type: item.type,
+                    date: item.date,
+                    category: {
+                        id: item.categoryId.id,
+                        name: item.categoryId.name,
+                    },
+                    images: item.images,
+                    user: {
+                        id: item.userId.id,
+                        name: item.userId.name,
+                        surname: item.userId.surname,
+                        email: item.userId.email,
+                        telegram: item.userId.telegram,
+                        phoneNumber: item.userId.phoneNumber,
+                    },
+                    status: item.status,
+                }
+            })
         }catch (error){
             console.log(error.message);
             return res.status(500).json({detail: "Internal server error."});
