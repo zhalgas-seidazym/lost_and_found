@@ -20,15 +20,24 @@ router.post(
     '/create',
     (req, res, next) => middleware.isAuth(req, res, next),
     gcsService.upload.array('images', 5),
-    async (req, res, next) => await gcsService.uploadToGCS(req, res, next),
+    (req, res, next) => gcsService.uploadToGCS(req, res, next),
     middleware.validateCreateItem,
     (req, res) => itemController.createItem(req, res)
+);
+
+router.put(
+    '/update/status/:id',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAdmin(req, res, next),
+    (req, res, next) => middleware.checkItemExists(req, res, next),
+    (req, res, next) => middleware.checkAccessToItem(req, res, next),
+    (req, res) => itemController.updateItemStatus(req, res)
 );
 
 router.delete(
     '/update/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
-    (req, res, next) => middleware.validateId(req, res, next),
+    (req, res, next) => middleware.checkItemExists(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
     (req, res) => itemController.deleteImage(req, res)
 );
@@ -36,7 +45,7 @@ router.delete(
 router.put(
     '/update/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
-    (req, res, next) => middleware.validateId(req, res, next),
+    (req, res, next) => middleware.checkItemExists(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
     gcsService.upload.array('images', 5),
     (req, res, next) => gcsService.uploadToGCS(req, res, next),
@@ -46,18 +55,16 @@ router.put(
 router.delete(
     '/delete/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
-    (req, res, next) => middleware.validateId(req, res, next),
+    (req, res, next) => middleware.checkItemExists(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
     (req, res) => itemController.deleteItem(req, res)
 );
 
-router.put(
-    '/update/status/:id',
+router.get(
+    '/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
-    (req, res, next) => middleware.isAdmin(req, res, next),
-    (req, res, next) => middleware.validateId(req, res, next),
-    (req, res, next) => middleware.checkAccessToItem(req, res, next),
-    (req, res) => itemController.updateItemStatus(req, res)
+    (req, res, next) => middleware.checkItemExists(req, res, next),
+    (req, res) => itemController.getItemById(req, res)
 );
 
 module.exports = router;

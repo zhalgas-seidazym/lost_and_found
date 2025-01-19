@@ -100,11 +100,18 @@ class Middleware {
         }
     }
 
-    async validateId(req, res, next){
+    async checkItemExists(req, res, next){
+        const {id} = req.params;
         try{
-            if(!ObjectId.isValid(req.params.id)){
+            if(!ObjectId.isValid(id)){
                 return res.status(404).json({"detail": "Incorrect id."});
             }
+
+            const item = await this.itemRepository.findById(id);
+            if(!item){
+                return res.status(404).json({"detail": "Item not found."});
+            }
+            req.item = item;
             next();
         }catch (err){
             res.status(500).json({detail: err.message || 'An unexpected error occurred.' });
@@ -112,15 +119,10 @@ class Middleware {
     }
 
     async checkAccessToItem(req, res, next){
-        const {id} = req.params;
+        const item = req.item;
         const user = req.user;
         const isAdmin = req.isAdmin || false;
-
         try{
-            const item = await this.itemRepository.findById(id);
-            if(!item){
-                return res.status(404).json({"detail": "Item not found."});
-            }
             if(item.userId.toString() !== user.id && !isAdmin){
                 return res.status(403).json({"detail": "Access denied."});
             }

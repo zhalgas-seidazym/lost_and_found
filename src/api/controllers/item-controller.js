@@ -120,6 +120,21 @@ class ItemController{
             return res.status(500).json({"detail": "Internal server error."});
         }
     }
+
+    async getItemById(req, res){
+        const {id} = req.params;
+
+        try{
+            const item = await this.itemRepository.findById(id);
+            if(!item){
+
+            }
+
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({"detail": "Internal server error."});
+        }
+    }
 }
 
 module.exports = ItemController;
