@@ -62,6 +62,10 @@ class CategoryController {
         const {name} = req.body;
 
         try{
+            if(!name || name.length === 0){
+                return res.status(400).json({detail: "Name is required."});
+            }
+
             await this.categoryRepository.create({name});
 
             res.status(201).json({detail: 'Category created successfully.'});
@@ -81,6 +85,27 @@ class CategoryController {
             await this.categoryRepository.delete(id);
 
             res.status(204).json({detail: 'Category deleted successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({detail: "Internal server error."});
+        }
+    }
+
+    async updateCategory(req, res){
+        const {id} = req.params;
+        const {name} = req.body;
+
+        try{
+            if(!ObjectId.isValid(id)){
+                return res.status(400).json({detail: "Incorrect category ID."});
+            }
+            if(!name || name.length === 0){
+                return res.status(400).json({detail: "Name is required."});
+            }
+
+            await this.categoryRepository.update(id, {name});
+
+            res.status(204).json({detail: 'Category updated successfully.'});
         }catch (error){
             console.log(error.message);
             return res.status(500).json({detail: "Internal server error."});
