@@ -1,4 +1,5 @@
 const {ITEM_TYPES, ITEM_STATUS, ROLES} = require("../../utils/constants");
+const { ObjectId } = require('mongoose').Types;
 
 class CategoryController {
     constructor(categoryRepository, itemRepository, roleRepository) {
@@ -64,6 +65,22 @@ class CategoryController {
             await this.categoryRepository.create({name});
 
             res.status(201).json({detail: 'Category created successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({detail: "Internal server error."});
+        }
+    }
+
+    async deleteCategory(req, res){
+        const {id} = req.params;
+
+        try{
+            if(!ObjectId.isValid(id)){
+                return res.status(400).json({detail: "Incorrect category ID."});
+            }
+            await this.categoryRepository.delete(id);
+
+            res.status(204).json({detail: 'Category deleted successfully.'});
         }catch (error){
             console.log(error.message);
             return res.status(500).json({detail: "Internal server error."});

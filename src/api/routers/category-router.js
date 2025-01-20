@@ -27,4 +27,12 @@ router.post(
     (req, res) => categoryController.addCategory(req, res)
 );
 
+router.delete(
+    '/delete/:id',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAdmin(req, res, next),
+    (req, res) => categoryController.deleteCategory(req, res)
+);
+
+
 module.exports = router;
