@@ -1,4 +1,4 @@
-const {ITEM_STATUS, ROLES} = require("../../utils/constants");
+const {ITEM_STATUS, ROLES, ITEM_TYPES} = require("../../utils/constants");
 
 class ItemController{
     constructor(itemRepository, categoryRepository, roleRepository, gcsService) {
@@ -162,6 +162,58 @@ class ItemController{
                     status: item.status,
                 }
             })
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({detail: "Internal server error."});
+        }
+    }
+
+    async getMyItems(req, res){
+        const {
+            page = 1,
+            limit = 10,
+            type = ITEM_TYPES.LOST
+        } = req.query;
+        const user = req.user;
+
+        try {
+            const filter = {
+                userId: user.id,
+                type: type
+            };
+            const options = {
+                skip: (page - 1) * limit,
+                limit: limit,
+                sort: {createdAt: -1},
+                populate: ['categoryId']
+            };
+
+            let items = await this.itemRepository.findAll(filter, options);
+            items = items.map((item) => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    type: item.type,
+                    date: item.date,
+                    category: {
+                        id: item.categoryId.id,
+                        name: item.categoryId.name,
+                    }
+                };
+            });
+
+            const totalItems = await this.itemRepository.countDocuments(filter);
+            const totalPages = Math.ceil(totalItems / limit);
+
+            res.status(200).json({
+                totalItems,
+                limit,
+                totalPages,
+                page,
+                type,
+                items
+            });
         }catch (error){
             console.log(error.message);
             return res.status(500).json({detail: "Internal server error."});
