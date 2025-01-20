@@ -3,6 +3,19 @@ class BaseRepository {
         this.model = model;
     }
 
+    async countDocuments(filter = {}) {
+        try{
+            if (typeof filter !== 'object') {
+                throw new Error("Filter must be an object");
+            }
+
+            return await this.model.countDocuments(filter);
+        }catch (error) {
+            console.error('Error in countDocuments:', error.message);
+            throw new Error('Error in countDocuments:', error.message);
+        }
+    }
+
     async findById(id, populateFields = []) {
         try {
             if (!id) {
@@ -28,13 +41,15 @@ class BaseRepository {
         try {
             const { skip = 0, limit = 10, populate = null, sort = null } = options;
 
-            const query = this.model.find(filter)
+            let query = this.model.find(filter)
                 .skip(skip)
                 .limit(limit)
                 .sort(sort);
 
-            if (populate) {
-                query.populate(populate);
+            if (Array.isArray(populate) && populate.length > 0) {
+                populate.forEach((field) => {
+                    query = query.populate(field);
+                });
             }
 
             return await query.exec();
