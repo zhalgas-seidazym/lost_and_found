@@ -262,7 +262,12 @@ class ItemController{
             if(categoryId && ObjectId.isValid(categoryId)) {
                 filter.categoryId = categoryId;
             }
-            filter.status = status;
+            if(dateFrom && dateFrom.length > 0){
+                filter.date = {...filter.date, $gte: new Date(dateFrom)}
+            }
+            if(dateTo && dateTo.length > 0){
+                filter.date = {...filter.date, $lte: new Date(dateTo)}
+            }
             filter.type = type;
 
             if(!Object.values(SORT).includes(sort)){
@@ -275,13 +280,6 @@ class ItemController{
                 else if(sort === SORT.OLDEST){
                     options.sort = {createdAt: 1};
                 }
-            }
-
-            if(dateFrom && dateFrom.length > 0){
-                filter.date = {...filter.date, $gte: new Date(dateFrom)}
-            }
-            if(dateTo && dateTo.length > 0){
-                filter.date = {...filter.date, $lte: new Date(dateTo)}
             }
 
             options.skip = (page - 1) * limit;

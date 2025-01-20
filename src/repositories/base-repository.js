@@ -39,7 +39,7 @@ class BaseRepository {
 
     async findAll(filter = {}, options = {}) {
         try {
-            const { skip = 0, limit = 10, populate = null, sort = null } = options;
+            const { skip, limit, populate = null, sort = null } = options;
 
             let query = this.model.find(filter)
                 .skip(skip)
