@@ -1,4 +1,5 @@
-const {ITEM_STATUS, ROLES, ITEM_TYPES} = require("../../utils/constants");
+const {ITEM_STATUS, ROLES, ITEM_TYPES, SORT} = require("../../utils/constants");
+const {ObjectId} = require('mongoose').Types;
 
 class ItemController{
     constructor(itemRepository, categoryRepository, roleRepository, gcsService) {
@@ -169,14 +170,16 @@ class ItemController{
     }
 
     async getMyItems(req, res){
-        const {
-            page = 1,
-            limit = 10,
-            type = ITEM_TYPES.LOST
-        } = req.query;
+        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+        const type = req.query.type ? req.query.type : ITEM_TYPES.LOST;
         const user = req.user;
 
         try {
+            if(!Object.values(ITEM_TYPES).includes(type)){
+                return res.status(404).json({detail: "Type not found. It should be either 'lost' or 'found'."});
+            }
+
             const filter = {
                 userId: user.id,
                 type: type
@@ -190,6 +193,102 @@ class ItemController{
 
             let items = await this.itemRepository.findAll(filter, options);
             items = items.map((item) => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    type: item.type,
+                    date: item.date,
+                    category: {
+                        id: item.categoryId.id,
+                        name: item.categoryId.name,
+                    }
+                };
+            });
+
+            const totalItems = await this.itemRepository.countDocuments(filter);
+            const totalPages = Math.ceil(totalItems / limit);
+
+            res.status(200).json({
+                totalItems,
+                limit,
+                totalPages,
+                page,
+                type,
+                items
+            });
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({detail: "Internal server error."});
+        }
+    }
+
+    async searchItems(req, res){
+        const page = req.query.page ? parseInt(req.query.page, 10) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
+        const query = req.query.query ? req.query.query : null;
+        const categoryId = req.query.categoryId ? req.query.categoryId : null;
+        const type = req.query.type ? req.query.type : ITEM_TYPES.LOST;
+        const status = req.query.status ? req.query.status : ITEM_STATUS.APPROVED;
+        const sort = req.query.sort ? req.query.sort : SORT.NEWEST;
+        const dateFrom = req.query.dateFrom ? req.query.dateFrom : null;
+        const dateTo = req.query.dateTo ? req.query.dateTo : null;
+
+        const user = req.user;
+
+        try{
+            const filter = {};
+            const options = {};
+
+            if(!Object.values(ITEM_TYPES).includes(type)){
+                return res.status(404).json({detail: "Type not found. It should be either 'lost' or 'found'."});
+            }
+            if(!Object.values(ITEM_STATUS).includes(status)){
+                filter.status = ITEM_STATUS.APPROVED;
+            }
+            else filter.status = status;
+            const role = await this.roleRepository.findById(user.roleId);
+            if(filter.status !== ITEM_STATUS.APPROVED){
+                if(role.name !== ROLES.ADMIN){
+                    return res.status(403).json({detail: "Access denied."});
+                }
+            }
+            if(query) {
+                filter.$or = [
+                    { name: { $regex: query, $options: 'i' } },
+                    { description: { $regex: query, $options: 'i' } }
+                ];
+            }
+            if(categoryId && ObjectId.isValid(categoryId)) {
+                filter.categoryId = categoryId;
+            }
+            filter.status = status;
+            filter.type = type;
+
+            if(!Object.values(SORT).includes(sort)){
+                options.sort = {createdAt: -1};
+            }
+            else{
+                if(sort === SORT.NEWEST){
+                    options.sort = {createdAt: -1};
+                }
+                else if(sort === SORT.OLDEST){
+                    options.sort = {createdAt: 1};
+                }
+            }
+
+            if(dateFrom && dateFrom.length > 0){
+                filter.date = {...filter.date, $gte: new Date(dateFrom)}
+            }
+            if(dateTo && dateTo.length > 0){
+                filter.date = {...filter.date, $lte: new Date(dateTo)}
+            }
+
+            options.skip = (page - 1) * limit;
+            options.limit = limit;
+
+            const itemsFromRepo = await this.itemRepository.findAll(filter, options);
+            const items = itemsFromRepo.map((item) => {
                 return {
                     id: item.id,
                     name: item.name,

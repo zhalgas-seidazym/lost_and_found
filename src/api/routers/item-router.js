@@ -67,6 +67,12 @@ router.get(
 );
 
 router.get(
+    '/search',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res) => itemController.searchItems(req, res)
+);
+
+router.get(
     '/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.checkItemExists(req, res, next),
