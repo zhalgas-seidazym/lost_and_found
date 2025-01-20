@@ -56,6 +56,19 @@ class CategoryController {
             return res.status(500).json({detail: "Internal server error."});
         }
     }
+
+    async addCategory(req, res){
+        const {name} = req.body;
+
+        try{
+            await this.categoryRepository.create({name});
+
+            res.status(201).json({detail: 'Category created successfully.'});
+        }catch (error){
+            console.log(error.message);
+            return res.status(500).json({detail: "Internal server error."});
+        }
+    }
 }
 
 module.exports = CategoryController;

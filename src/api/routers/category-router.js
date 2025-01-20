@@ -20,4 +20,11 @@ router.get(
     (req, res) => categoryController.getCategories(req, res)
 );
 
+router.post(
+    '/add',
+    (req, res, next) => middleware.isAuth(req, res, next),
+    (req, res, next) => middleware.isAdmin(req, res, next),
+    (req, res) => categoryController.addCategory(req, res)
+);
+
 module.exports = router;
