@@ -34,14 +34,6 @@ router.put(
     (req, res) => itemController.updateItemStatus(req, res)
 );
 
-router.delete(
-    '/update/:id',
-    (req, res, next) => middleware.isAuth(req, res, next),
-    (req, res, next) => middleware.checkItemExists(req, res, next),
-    (req, res, next) => middleware.checkAccessToItem(req, res, next),
-    (req, res) => itemController.deleteImage(req, res)
-);
-
 router.put(
     '/update/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
