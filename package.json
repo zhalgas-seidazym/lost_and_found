@@ -4,7 +4,8 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server.js",
+    "swagger": "node ./src/swagger.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "passport-jwt": "^4.0.1",
     "path": "^0.12.7",
     "redis": "^4.7.0",
+    "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.3"

@@ -90,6 +90,9 @@ class UserController {
         const {email, redirectUrl} = req.body;
 
         try{
+            if(!email){
+                return res.status(400).json({detail: "Invalid email." });
+            }
             let user = await this.userRepository.findByEmail(email);
             if(user){
                 return res.status(409).send({detail: 'Account with this email already verified.'});
