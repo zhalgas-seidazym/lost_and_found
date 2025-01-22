@@ -24,7 +24,7 @@ router.post(
     (req, res, next) => gcsService.uploadToGCS(req, res, next),
     middleware.validateCreateItem,
     /**
-     #swagger.tags = ['Items']
+     #swagger.tags = ['Item']
      #swagger.description = 'Create a new item.'
 
      #swagger.consumes = ['multipart/form-data']
@@ -86,6 +86,13 @@ router.post(
      }
      }
 
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
      #swagger.responses[500] = {
      description: 'Internal server error.',
      schema: {
@@ -103,7 +110,7 @@ router.put(
     (req, res, next) => middleware.checkItemExists(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
     /**
-     #swagger.tags = ['Items']
+     #swagger.tags = ['Item']
      #swagger.description = 'Update the status of an item by ID.'
 
      #swagger.parameters['id'] = {
@@ -138,6 +145,20 @@ router.put(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
      #swagger.responses[500] = {
      description: 'Internal server error.',
      schema: {
@@ -156,7 +177,7 @@ router.put(
     gcsService.upload.array('images', 5),
     (req, res, next) => gcsService.uploadToGCS(req, res, next),
     /**
-     #swagger.tags = ['Items']
+     #swagger.tags = ['Item']
      #swagger.description = 'Update an existing item by ID.'
 
      #swagger.parameters['id'] = {
@@ -206,6 +227,20 @@ router.put(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
      #swagger.responses[500] = {
      description: 'Internal server error.',
      schema: {
@@ -222,7 +257,7 @@ router.delete(
     (req, res, next) => middleware.checkItemExists(req, res, next),
     (req, res, next) => middleware.checkAccessToItem(req, res, next),
     /**
-     #swagger.tags = ['Items']
+     #swagger.tags = ['Item']
      #swagger.description = 'Delete an item by ID.'
 
      #swagger.parameters['id'] = {
@@ -248,6 +283,20 @@ router.delete(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
      #swagger.responses[500] = {
      description: 'Internal server error.',
      schema: {
@@ -261,12 +310,224 @@ router.delete(
 router.get(
     '/my',
     (req, res, next) => middleware.isAuth(req, res, next),
+    /**
+     #swagger.tags = ['Item']
+     #swagger.description = 'Retrieve all items created by the current user.'
+
+     #swagger.parameters['page'] = {
+     in: 'query',
+     description: 'Page number for pagination.',
+     required: false,
+     schema: {
+     type: 'integer',
+     default: 1
+     }
+     }
+
+     #swagger.parameters['limit'] = {
+     in: 'query',
+     description: 'Number of items per page.',
+     required: false,
+     schema: {
+     type: 'integer',
+     default: 10
+     }
+     }
+
+     #swagger.parameters['type'] = {
+     in: 'query',
+     description: 'Type of items to retrieve (lost or found).',
+     required: false,
+     schema: {
+     type: 'string',
+     enum: ['lost', 'found'],
+     default: 'lost'
+     }
+     }
+
+     #swagger.responses[200] = {
+     description: 'A list of items created by the current user.',
+     schema: {
+     totalItems: 0,
+     limit: 10,
+     totalPages: 0,
+     page: 1,
+     type: 'lost',
+     items: [
+     {
+     id: 'string',
+     name: 'string',
+     description: 'string',
+     type: 'string',
+     date: 'string',
+     category: {
+     id: 'string',
+     name: 'string'
+     }
+     }
+     ]
+     }
+     }
+
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[500] = {
+     description: 'Internal server error.',
+     schema: {
+     detail: 'Internal server error.'
+     }
+     }
+     */
     (req, res) => itemController.getMyItems(req, res)
 );
 
 router.get(
     '/search',
     (req, res, next) => middleware.isAuth(req, res, next),
+    /**
+     #swagger.tags = ['Item']
+     #swagger.description = 'Search for items.'
+
+     #swagger.parameters['page'] = {
+     in: 'query',
+     description: 'Page number for pagination.',
+     required: false,
+     schema: {
+     type: 'integer',
+     default: 1
+     }
+     }
+
+     #swagger.parameters['limit'] = {
+     in: 'query',
+     description: 'Number of items per page.',
+     required: false,
+     schema: {
+     type: 'integer',
+     default: 10
+     }
+     }
+
+     #swagger.parameters['query'] = {
+     in: 'query',
+     description: 'Search query string.',
+     required: false,
+     schema: {
+     type: 'string'
+     }
+     }
+
+     #swagger.parameters['categoryId'] = {
+     in: 'query',
+     description: 'Category ID to filter items.',
+     required: false,
+     schema: {
+     type: 'string'
+     }
+     }
+
+     #swagger.parameters['type'] = {
+     in: 'query',
+     description: 'Type of items to search for (lost or found).',
+     required: false,
+     schema: {
+     type: 'string',
+     enum: ['lost', 'found'],
+     default: 'lost'
+     }
+     }
+
+     #swagger.parameters['status'] = {
+     in: 'query',
+     description: 'Status of items to search for.',
+     required: false,
+     schema: {
+     type: 'string',
+     enum: ['approved', 'waiting', 'rejected'],
+     default: 'approved'
+     }
+     }
+
+     #swagger.parameters['sort'] = {
+     in: 'query',
+     description: 'Sorting order (newest or oldest).',
+     required: false,
+     schema: {
+     type: 'string',
+     enum: ['newest', 'oldest'],
+     default: 'newest'
+     }
+     }
+
+     #swagger.parameters['dateFrom'] = {
+     in: 'query',
+     description: 'Filter items from this date.',
+     required: false,
+     schema: {
+     type: 'string',
+     format: 'date'
+     }
+     }
+
+     #swagger.parameters['dateTo'] = {
+     in: 'query',
+     description: 'Filter items up to this date.',
+     required: false,
+     schema: {
+     type: 'string',
+     format: 'date'
+     }
+     }
+
+     #swagger.responses[200] = {
+     description: 'Search results for items.',
+     schema: {
+     totalItems: 0,
+     limit: 10,
+     totalPages: 0,
+     page: 1,
+     items: [
+     {
+     id: 'string',
+     name: 'string',
+     description: 'string',
+     type: 'string',
+     date: 'string',
+     category: {
+     id: 'string',
+     name: 'string'
+     }
+     }
+     ]
+     }
+     }
+
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
+     #swagger.responses[500] = {
+     description: 'Internal server error.',
+     schema: {
+     detail: 'Internal server error.'
+     }
+     }
+     */
     (req, res) => itemController.searchItems(req, res)
 );
 
@@ -274,6 +535,72 @@ router.get(
     '/:id',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.checkItemExists(req, res, next),
+    /**
+     #swagger.tags = ['Item']
+     #swagger.description = 'Retrieve an item by ID.'
+
+     #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'The unique identifier of the item.',
+     required: true,
+     schema: {
+     type: 'string'
+     }
+     }
+
+     #swagger.responses[200] = {
+     description: 'Details of the item.',
+     schema: {
+     id: 'string',
+     name: 'string',
+     description: 'string',
+     type: 'string',
+     date: 'string',
+     category: {
+     id: 'string',
+     name: 'string'
+     },
+     images: ['string'],
+     user: {
+     id: 'string',
+     name: 'string',
+     surname: 'string',
+     email: 'string',
+     telegram: 'string',
+     phoneNumber: 'string'
+     },
+     status: 'string'
+     }
+     }
+
+     #swagger.responses[401] = {
+     description: 'Unauthorized or invalid token.',
+     schema: {
+     detail: 'Invalid token or unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
+     #swagger.responses[404] = {
+     description: 'Item not found.',
+     schema: {
+     detail: 'Item not found.'
+     }
+     }
+
+     #swagger.responses[500] = {
+     description: 'Internal server error.',
+     schema: {
+     detail: 'Internal server error.'
+     }
+     }
+     */
     (req, res) => itemController.getItemById(req, res)
 );
 
