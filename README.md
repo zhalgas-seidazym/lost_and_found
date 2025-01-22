@@ -25,7 +25,7 @@ Lost and Found Platform is a web application designed to help users report and m
    npm install
    ```
 
-3. Set up the environment variables. Create a `.env` file in the root directory and provide the following variables:
+3. Set up the environment variables. Create a `.env` file in the **base directory** and provide the following variables:
 
    ```env
    PORT=8000
@@ -45,13 +45,17 @@ Lost and Found Platform is a web application designed to help users report and m
 
    **Note**: If you modify the `HOST` variable, you must regenerate the Swagger documentation by running `npm run swagger`.
 
-4. Start the services using Docker Compose:
+4. Add the Google Cloud service key file:
+
+   Place your Google Cloud service key JSON file in the `src/config` directory. The file should be named `gcloud-key.json` to ensure proper integration with the Google Cloud Storage bucket.
+
+5. Start the services using Docker Compose:
 
    ```bash
    docker-compose up -d
    ```
 
-5. Alternatively, you can start the development server directly:
+6. Alternatively, you can start the development server directly:
 
    ```bash
    npm start
@@ -59,7 +63,7 @@ Lost and Found Platform is a web application designed to help users report and m
 
    This will launch the server on the port specified in the `.env` file (default: `8000`).
 
-6. Access the application at `http://localhost:8000` (or the configured port).
+7. Access the application at `http://localhost:8000` (or the configured port).
 
 ## Usage
 
