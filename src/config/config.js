@@ -9,6 +9,7 @@ module.exports = {
     baseDir: BaseDir,
     mongodb: process.env.MONGODB_URI,
     port: process.env.PORT,
+    host: process.env.HOST,
     jwtSecret: process.env.JWT_SECRET,
     jwtExpires: process.env.JWT_EXPIRES,
     redisHost: process.env.REDIS_HOST,

@@ -40,12 +40,18 @@ Lost and Found Platform is a web application designed to help users report and m
    GCS_BUCKET_NAME=your_bucket_name
    ```
 
-4. Start the server:
+4. Start the services using Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
+
+5. Alternatively, you can start the development server directly:
    ```bash
    npm start
    ```
+   This will launch the server on the port specified in the `.env` file (default: `8000`).
 
-5. Access the application at `http://localhost:8000` (or the configured port).
+6. Access the application at `http://localhost:8000` (or the configured port).
 
 ## Usage
 
@@ -56,6 +62,14 @@ The API provides endpoints for managing users, items, and authentication. Full d
 ```
 http://localhost:8000/docs
 ```
+
+### Generate Swagger Documentation
+
+To regenerate Swagger documentation, run:
+```bash
+npm run swagger
+```
+This will generate a `swagger_output.json` file with updated API documentation.
 
 ### Running Tests
 
