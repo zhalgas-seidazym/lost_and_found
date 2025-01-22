@@ -2,11 +2,12 @@ const {ITEM_STATUS, ROLES, ITEM_TYPES, SORT} = require("../../utils/constants");
 const {ObjectId} = require('mongoose').Types;
 
 class ItemController{
-    constructor(itemRepository, categoryRepository, roleRepository, gcsService) {
+    constructor(itemRepository, categoryRepository, roleRepository, gcsService, redisService) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
         this.roleRepository = roleRepository;
         this.gcsService = gcsService;
+        this.redisService = redisService;
     }
 
     async createItem (req, res){
@@ -31,6 +32,8 @@ class ItemController{
                 images: fileUrls,
                 userId: user.id,
             });
+
+            await this.redisService.delete('default-search');
 
             res.status(200).json({
                 detail: 'Item created successfully.',
@@ -72,6 +75,8 @@ class ItemController{
             item.status = ITEM_STATUS.WAITING
             await item.save();
 
+            await this.redisService.delete('default-search');
+
             res.status(204).json({detail: 'Item updated successfully.'});
         }catch (error){
             console.log(error.message);
@@ -88,6 +93,8 @@ class ItemController{
             const images = item.images.map((image) => this.gcsService.deleteFile(image.split('/')[4]));
             await Promise.all(images);
             await this.itemRepository.delete(id);
+
+            await this.redisService.delete('default-search');
 
             res.status(204).json({detail: 'Item deleted successfully.'});
         }catch (error){
@@ -108,6 +115,8 @@ class ItemController{
             const item = await this.itemRepository.findById(id);
             item.status = itemStatus;
             await item.save();
+
+            await this.redisService.delete('default-search');
 
             res.status(204).json({detail: 'Item approved successfully.'});
         }catch (error){
@@ -230,6 +239,16 @@ class ItemController{
             const filter = {};
             const options = {};
 
+            if(this.isDefaultSearch({
+                page, limit, query, categoryId, type, status, sort, dateFrom, dateTo
+            })){
+                let defaultSearch = await this.redisService.get('default-search');
+                if(defaultSearch){
+                    defaultSearch = JSON.parse(defaultSearch);
+                    return res.status(200).json(defaultSearch);
+                }
+            }
+
             if(!Object.values(ITEM_TYPES).includes(type)){
                 return res.status(404).json({detail: "Type not found. It should be either 'lost' or 'found'."});
             }
@@ -292,19 +311,29 @@ class ItemController{
 
             const totalItems = await this.itemRepository.countDocuments(filter);
             const totalPages = Math.ceil(totalItems / limit);
-
-            res.status(200).json({
+            const search = {
                 totalItems,
                 limit,
                 totalPages,
                 page,
                 type,
                 items
-            });
+            };
+
+            await this.redisService.set('default-search', JSON.stringify(search), 60 * 60 * 24);
+
+            res.status(200).json(search);
         }catch (error){
             console.log(error.message);
             return res.status(500).json({detail: "Internal server error."});
         }
+    }
+
+    isDefaultSearch(filter){
+        return filter.page === 1 && filter.limit === 10 &&
+            filter.query === null && filter.categoryId === null &&
+            filter.type === ITEM_TYPES.LOST && filter.status === ITEM_STATUS.APPROVED &&
+            filter.sort === SORT.NEWEST && filter.dateFrom === null && filter.dateTo === null;
     }
 }
 

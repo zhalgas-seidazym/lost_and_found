@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const {GCSService} = require('../../services/global-services');
+const {GCSService, RedisService} = require('../../services/global-services');
 const {ItemController} = require('../controllers/global-controllers');
 const {ItemRepository, UserRepository, RoleRepository, CategoryRepository} = require('../../repositories/global-repositories');
 const Middleware = require('../middlewares/middleware');
 
 
 const gcsService = new GCSService();
+const redisService = new RedisService();
 const itemRepository = new ItemRepository();
 const userRepository = new UserRepository();
 const categoryRepository = new CategoryRepository();
 const roleRepository = new RoleRepository();
 
-const itemController = new ItemController(itemRepository, categoryRepository, roleRepository, gcsService);
+const itemController = new ItemController(itemRepository, categoryRepository, roleRepository, gcsService, redisService);
 const middleware = new Middleware(userRepository, roleRepository, itemRepository);
 
 router.post(
