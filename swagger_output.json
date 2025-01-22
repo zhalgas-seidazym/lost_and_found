@@ -121,64 +121,438 @@
     },
     "/api/item/create": {
       "post": {
-        "description": "",
+        "tags": [
+          "Items"
+        ],
+        "description": "Create a new item.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data for creating a new item.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Item Name"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Item Description"
+                },
+                "date": {
+                  "type": "string",
+                  "example": "2025-01-01"
+                },
+                "categoryId": {
+                  "type": "string",
+                  "example": "1234567890abcdef12345678"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "lost"
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "date",
+                "categoryId",
+                "type"
+              ]
+            }
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "file",
+              "format": "binary"
+            },
+            "description": "Up to 5 images for the item, provided as file uploads."
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Item created successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Item created successfully."
+                },
+                "itemId": {
+                  "type": "string",
+                  "example": "1234567890abcdef12345678"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Name is required."
+                },
+                "categoryId": {
+                  "type": "string",
+                  "example": "Category ID is required."
+                },
+                "date": {
+                  "type": "string",
+                  "example": "Date is required."
+                },
+                "images": {
+                  "type": "string",
+                  "example": "Images are required."
+                },
+                "type": {
+                  "type": "string",
+                  "example": "Type is incorrect. It should be either 'lost' or 'found'."
+                },
+                "detail": {
+                  "type": "string",
+                  "example": "Unauthorized."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or invalid token.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Invalid token or unauthorized."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Category not found."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Internal server error."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           }
         }
       }
     },
     "/api/item/update/status/{id}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Items"
+        ],
+        "description": "Update the status of an item by ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the item to update.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "The new status for the item. (Valid values: approved, waiting, rejected)",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "itemStatus": {
+                  "type": "string",
+                  "example": "approved"
+                }
+              },
+              "required": [
+                "itemStatus"
+              ]
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "Item status updated successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Item approved successfully."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Incorrect item status.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Incorrect item status."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Internal server error."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           }
         }
       }
     },
     "/api/item/update/{id}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Items"
+        ],
+        "description": "Update an existing item by ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the item to update.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data for updating the item. Images can be added as file uploads, and existing images can be deleted using their URLs.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Updated Item Name"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Updated Item Description"
+                },
+                "date": {
+                  "type": "string",
+                  "example": "2025-01-01"
+                },
+                "categoryId": {
+                  "type": "string",
+                  "example": "1234567890abcdef12345678"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "lost"
+                },
+                "deleteImages": {
+                  "type": "array",
+                  "example": [
+                    "https://example.com/image1.jpg"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "description",
+                "date",
+                "categoryId",
+                "type"
+              ]
+            }
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "file",
+              "format": "binary"
+            },
+            "description": "Up to 5 new images for the item, provided as file uploads."
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "Item updated successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Item updated successfully."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or missing required fields.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Images are required. You cannot delete all images without adding new ones."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Internal server error."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           }
         }
       }
     },
     "/api/item/delete/{id}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Items"
+        ],
+        "description": "Delete an item by ID.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "The unique identifier of the item to delete.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "204": {
+            "description": "Item deleted successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Item deleted successfully."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Item not found."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Internal server error."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           }
         }
       }
@@ -224,7 +598,7 @@
     "/api/category/": {
       "get": {
         "tags": [
-          "Categories"
+          "Category"
         ],
         "description": "Retrieve categories with item count.",
         "parameters": [
@@ -338,6 +712,21 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized access.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Unauthorized."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
           "403": {
             "description": "Access denied if the user is not an admin and tries to access non-approved items.",
             "schema": {
@@ -374,7 +763,7 @@
     "/api/category/add": {
       "post": {
         "tags": [
-          "Categories"
+          "Category"
         ],
         "description": "Add a new category.",
         "parameters": [
@@ -428,6 +817,36 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized access.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Unauthorized."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied if the user is not an admin.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Access denied."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
           "500": {
             "description": "Internal server error.",
             "schema": {
@@ -449,7 +868,7 @@
     "/api/category/delete/{id}": {
       "delete": {
         "tags": [
-          "Categories"
+          "Category"
         ],
         "description": "Delete a category by ID.",
         "parameters": [
@@ -495,6 +914,21 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized access.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Unauthorized."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
           "403": {
             "description": "Access denied if the user is not an admin.",
             "schema": {
@@ -531,7 +965,7 @@
     "/api/category/update/{id}": {
       "put": {
         "tags": [
-          "Categories"
+          "Category"
         ],
         "description": "Update a category by ID.",
         "parameters": [
@@ -588,6 +1022,21 @@
                 "detail": {
                   "type": "string",
                   "example": "Incorrect category ID."
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "example": "Unauthorized."
                 }
               },
               "xml": {

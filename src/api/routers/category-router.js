@@ -18,7 +18,7 @@ router.get(
     '/',
     (req, res, next) => middleware.isAuth(req, res, next),
     /**
-     #swagger.tags = ['Categories']
+     #swagger.tags = ['Category']
      #swagger.description = 'Retrieve categories with item count.'
 
      #swagger.parameters['query'] = {
@@ -74,6 +74,13 @@ router.get(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized access.',
+     schema: {
+     detail: 'Unauthorized.'
+     }
+     }
+
      #swagger.responses[403] = {
      description: 'Access denied if the user is not an admin and tries to access non-approved items.',
      schema: {
@@ -95,40 +102,54 @@ router.post(
     '/add',
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.isAdmin(req, res, next),
-    /*
-    #swagger.tags = ['Categories']
-    #swagger.description = 'Add a new category.'
+    /**
+     #swagger.tags = ['Category']
+     #swagger.description = 'Add a new category.'
 
-    #swagger.parameters['body'] = {
-        in: 'body',
-        description: 'Data for creating a new category.',
-        required: true,
-        schema: {
-            $name: 'Electronics'
-        }
-    }
+     #swagger.parameters['body'] = {
+     in: 'body',
+     description: 'Data for creating a new category.',
+     required: true,
+     schema: {
+     $name: 'Electronics'
+     }
+     }
 
-    #swagger.responses[201] = {
-        description: 'Category created successfully.',
-        schema: {
-            detail: 'Category created successfully.'
-        }
-    }
+     #swagger.responses[201] = {
+     description: 'Category created successfully.',
+     schema: {
+     detail: 'Category created successfully.'
+     }
+     }
 
-    #swagger.responses[400] = {
-        description: 'Validation error or missing required fields.',
-        schema: {
-            detail: 'Name is required.'
-        }
-    }
+     #swagger.responses[400] = {
+     description: 'Validation error or missing required fields.',
+     schema: {
+     detail: 'Name is required.'
+     }
+     }
 
-    #swagger.responses[500] = {
-        description: 'Internal server error.',
-        schema: {
-            detail: 'Internal server error.'
-        }
-    }
-    */
+     #swagger.responses[401] = {
+     description: 'Unauthorized access.',
+     schema: {
+     detail: 'Unauthorized.'
+     }
+     }
+
+     #swagger.responses[403] = {
+     description: 'Access denied if the user is not an admin.',
+     schema: {
+     detail: 'Access denied.'
+     }
+     }
+
+     #swagger.responses[500] = {
+     description: 'Internal server error.',
+     schema: {
+     detail: 'Internal server error.'
+     }
+     }
+     */
     (req, res) => categoryController.addCategory(req, res)
 );
 
@@ -137,7 +158,7 @@ router.delete(
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.isAdmin(req, res, next),
     /**
-     #swagger.tags = ['Categories']
+     #swagger.tags = ['Category']
      #swagger.description = 'Delete a category by ID.'
 
      #swagger.parameters['id'] = {
@@ -163,6 +184,13 @@ router.delete(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized access.',
+     schema: {
+     detail: 'Unauthorized.'
+     }
+     }
+
      #swagger.responses[403] = {
      description: 'Access denied if the user is not an admin.',
      schema: {
@@ -185,7 +213,7 @@ router.put(
     (req, res, next) => middleware.isAuth(req, res, next),
     (req, res, next) => middleware.isAdmin(req, res, next),
     /**
-     #swagger.tags = ['Categories']
+     #swagger.tags = ['Category']
      #swagger.description = 'Update a category by ID.'
 
      #swagger.parameters['id'] = {
@@ -220,6 +248,13 @@ router.put(
      }
      }
 
+     #swagger.responses[401] = {
+     description: 'Unauthorized access.',
+     schema: {
+     detail: 'Unauthorized.'
+     }
+     }
+
      #swagger.responses[403] = {
      description: 'Access denied if the user is not an admin.',
      schema: {
@@ -235,6 +270,6 @@ router.put(
      }
      */
     (req, res) => categoryController.updateCategory(req, res)
-)
+);
 
 module.exports = router;
