@@ -13,12 +13,14 @@ Lost and Found Platform is a web application designed to help users report and m
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/zhalgas-seidazym/lost_and_found.git
    cd lost_and_found
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -27,6 +29,7 @@ Lost and Found Platform is a web application designed to help users report and m
 
    ```env
    PORT=8000
+   HOST=localhost
    MONGODB_URI=your_mongodb_connection_string
    REDIS_HOST=localhost
    REDIS_PORT=6379
@@ -40,15 +43,20 @@ Lost and Found Platform is a web application designed to help users report and m
    GCS_BUCKET_NAME=your_bucket_name
    ```
 
+   **Note**: If you modify the `HOST` variable, you must regenerate the Swagger documentation by running `npm run swagger`.
+
 4. Start the services using Docker Compose:
+
    ```bash
    docker-compose up -d
    ```
 
 5. Alternatively, you can start the development server directly:
+
    ```bash
    npm start
    ```
+
    This will launch the server on the port specified in the `.env` file (default: `8000`).
 
 6. Access the application at `http://localhost:8000` (or the configured port).
@@ -66,9 +74,11 @@ http://localhost:8000/docs
 ### Generate Swagger Documentation
 
 To regenerate Swagger documentation, run:
-```bash
-npm run swagger
-```
+
+   ```bash
+   npm run swagger
+   ```
+
 This will generate a `swagger_output.json` file with updated API documentation.
 
 ### Running Tests
@@ -88,3 +98,4 @@ Currently, no tests are provided. To add tests, integrate your preferred testing
 - **Redis**: Cache for sessions and temporary tokens
 - **Google Cloud Storage**: File storage
 - **Swagger**: API documentation
+
